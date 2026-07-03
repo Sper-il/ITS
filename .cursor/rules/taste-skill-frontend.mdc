@@ -1,0 +1,95 @@
+---
+name: taste-skill-frontend
+description: Auto-load the design-taste-frontend skill (v2 experimental) from .agents/skills when working on any frontend UI code. Anti-slop rules, em-dash ban, design system map, dials, Pre-Flight Check.
+---
+
+# Taste Skill v2 (Auto-loaded)
+
+The full skill specification lives at:
+
+```
+.agents/skills/design-taste-frontend/SKILL.md
+```
+
+When this rule is active, treat the contents of that file as the binding spec for any UI work in this workspace. Key invariants to enforce:
+
+## Dials (default: VARIANCE 8 / MOTION 6 / DENSITY 4)
+
+Override per project. For data-dense dashboards, prefer VARIANCE 4-6, MOTION 2-4, DENSITY 6-8.
+
+## Hard Bans (Section 9 — AI Tells)
+
+- ZERO em-dash (`—`) anywhere in visible UI: headlines, eyebrows, pills, body, quotes, attribution, captions, buttons, alt text.
+- NO section-numbering eyebrows (`00 / INDEX`, `001 · Capabilities`).
+- NO version labels in hero (`V0.6`, `BETA`, `INVITE-ONLY`) unless brief is a launch.
+- NO decorative dots before nav items / list rows (only when conveying real semantic state).
+- NO photo-credit captions as decoration (`Field study no. 12 · Ines Caetano`).
+- NO decorative text strips at hero bottom (`BRAND. MOTION. SPATIAL.`).
+- NO scroll cues (`Scroll`, `↓ scroll`, `Scroll to explore`).
+- NO version footers on marketing pages.
+- NO locale / city-name / time / weather strips for non-globally-distributed briefs.
+- NO Jane Doe / Acme / SmartFlow placeholder names.
+- NO Inter as default font. Use Geist, Plus Jakarta Sans, Cabinet Grotesk, Satoshi, or brand-appropriate sans with full Vietnamese diacritic coverage.
+- NO 3 equal-card feature rows. Use zig-zag, asymmetric, or scroll-snap alternative.
+- NO fake product UI built from `<div>` rectangles.
+- NO hand-rolled SVG icons. Use Phosphor / HugeIcons / Radix / Tabler.
+- NO `window.addEventListener('scroll')` — use Motion `useScroll()`, GSAP ScrollTrigger, IntersectionObserver, or CSS scroll-driven animations.
+
+## Hard Rules (Section 4)
+
+- Color Consistency Lock: ONE accent across the whole page. Lock it. Audit every component.
+- Shape Consistency Lock: ONE corner-radius system. Pick 8/12/16/pill and stick to it.
+- Button Contrast Check: every CTA passes WCAG AA (4.5:1 body, 3:1 large text).
+- Hero Discipline: headline ≤ 2 lines, subtext ≤ 20 words AND ≤ 4 lines, CTAs visible without scroll, font scale planned around image.
+- Eyebrow Restraint: max 1 eyebrow per 3 sections (hero counts as 1). Mechanical check: count `uppercase tracking` instances ≤ ceil(sectionCount / 3).
+- Italic Descender Clearance: italic words with `y g j p q` need `leading-[1.1]` minimum + `pb-1` reserve.
+- Bento Cell Count: N items = exactly N cells. No empty middle or trailing cells.
+- Page Theme Lock: ONE theme (light / dark / auto). No mid-page light/dark flips.
+- Section-Layout-Repetition Ban: across 8 sections, at least 4 different layout families.
+- Zigzag Alternation Cap: max 2 consecutive image+text-split sections.
+- Split-Header Ban: do not use "left big headline + right small explainer paragraph" as section header. Stack vertically instead.
+- No Duplicate CTA Intent: only one label per CTA intent (e.g., only one "contact" CTA per page).
+- Long lists (>5 items) need a different UI component: 2-col grid, card-per-spec, tabs, scroll-snap pills, marquee, carousel.
+
+## Motion Discipline (Section 5)
+
+- Animate ONLY `transform` and `opacity`. Never `top`, `left`, `width`, `height`.
+- Hardware acceleration: `will-change: transform` sparingly, only on actively animating elements.
+- Reduced motion: MANDATORY for anything `MOTION_INTENSITY > 3`. Wrap in `useReducedMotion()` (Motion) or `@media (prefers-reduced-motion: reduce)` (CSS).
+- Motion library: `motion/react` (the rebrand of Framer Motion). GSAP only for full-page scrolltelling.
+- DO NOT mix GSAP / Three.js with Motion in the same component tree.
+- Apply grain / noise exclusively to fixed `pointer-events-none` pseudo-elements.
+- Z-index restraint: do not spam `z-50`. Use systemic scale (sticky nav, modals, overlays, grain).
+
+## Stack (when greenfield)
+
+- Framework: React or Next.js. Default Server Components. Wrap providers in `"use client"`.
+- Styling: Tailwind v4 default (`@tailwindcss/postcss` or Vite plugin). v3 only if existing project demands it.
+- Interactivity isolation: motion components MUST be isolated leaves with `"use client"`.
+- State: local `useState`/`useReducer`. Global ONLY for deep prop-drilling avoidance (Zustand, Jotai, Context).
+- Never `useState` for continuous values (mouse position, scroll). Use `useMotionValue` / `useTransform` outside React render cycle.
+- Icons: Phosphor / HugeIcons / Radix / Tabler (priority). Lucide on explicit user request only.
+
+## Dark Mode Protocol (Section 8)
+
+- Dual-mode by default. Never ship light-only or dark-only without explicit instruction.
+- Pick token strategy: Tailwind `dark:` variant OR CSS variables. One strategy per project.
+- Contrast parity across modes: if a CTA pops in light, it pops in dark.
+- No pure `#000000` or pure `#ffffff`. Off-black (zinc-950, near-black warm gray) and off-white.
+- Respect `prefers-color-scheme: dark` unless brand insists otherwise.
+
+## Out of Scope (Section 13)
+
+Taste-skill is NOT for:
+- Dashboards / dense product UI / admin panels (use Fluent, Carbon, Atlassian, or Polaris).
+- Data tables (use TanStack Table or AG Grid).
+- Multi-step forms / wizards.
+- Code editors (use Monaco / CodeMirror).
+- Native mobile (use Apple HIG / Material directly).
+- Realtime collab UIs.
+
+For those surfaces, apply ONLY the marketing-page / about-page / landing-page parts where applicable.
+
+## Pre-Flight Check (Section 14)
+
+Before shipping, run the full ~50-item matrix in SKILL.md §14. Every box must honestly pass. If a single checkbox cannot be ticked, the page is not done.

@@ -1,0 +1,12 @@
+              precision    recall  f1-score   support
+
+       LOS_A       0.94      0.82      0.88      1038
+       LOS_B       0.63      0.52      0.57       329
+       LOS_C       0.45      0.71      0.55       430
+       LOS_D       0.56      0.51      0.54       301
+       LOS_E       0.40      0.65      0.50       316
+       LOS_F       0.92      0.69      0.79       931
+
+    accuracy                           0.70      3345
+   macro avg       0.65      0.65      0.64      3345
+weighted avg       0.75      0.70      0.71      3345

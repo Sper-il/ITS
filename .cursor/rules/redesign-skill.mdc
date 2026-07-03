@@ -1,0 +1,149 @@
+---
+name: redesign-existing-projects
+description: Auto-load the redesign-existing-projects skill when auditing or upgrading an existing UI codebase. Diagnostic checklist, fix priority order, never break functionality.
+---
+
+# Redesign Skill (Auto-loaded)
+
+The full skill specification lives at:
+
+```
+.agents/skills/redesign-existing-projects/SKILL.md
+```
+
+When this rule is active, treat the contents of that file as the binding spec for any UI audit / upgrade / refactor work in this workspace.
+
+## Workflow (3-step)
+
+1. **Scan** — Read the codebase. Identify framework, styling method (Tailwind, vanilla, styled-components), and current design patterns.
+2. **Diagnose** — Run through the audit checklist below. List every generic pattern, weak point, missing state.
+3. **Fix** — Apply targeted upgrades with the existing stack. Do not rewrite from scratch. Improve what's there.
+
+## Typography Audit
+
+- Browser default fonts or Inter everywhere → replace with character font (Geist, Outfit, Cabinet Grotesk, Satoshi, Plus Jakarta Sans).
+- Headlines lack presence → increase size for display, tighten letter-spacing, reduce line-height.
+- Body too wide → limit to ~65 characters, increase line-height (1.5-1.7).
+- Only Regular + Bold weights → introduce Medium (500) and SemiBold (600).
+- Numbers in proportional font → use monospace or `font-variant-numeric: tabular-nums`.
+- Missing letter-spacing adjustments → negative for large headers, positive for small caps / labels.
+- All-caps subheaders everywhere → try lowercase italics, sentence case, small-caps.
+- Orphaned words → `text-wrap: balance` or `text-wrap: pretty`.
+
+## Color & Surfaces Audit
+
+- Pure `#000000` → off-black or tinted dark.
+- Oversaturated accents → desaturate to <80%.
+- More than one accent → pick one, remove the rest.
+- Mixing warm and cool grays → stick to one family.
+- Purple/blue AI gradient aesthetic → replace with neutral base + single considered accent.
+- Generic `box-shadow` → tint to background hue.
+- Flat design with zero texture → add subtle noise / grain / micro-pattern.
+- Random dark sections in light page (or vice versa) → commit to one mode or shift within same palette family.
+- Empty flat sections → add imagery, blurred overlay, masked text, ambient gradients.
+
+## Layout Audit
+
+- Everything centered/symmetrical → break with offset margins, mixed aspect ratios, left-aligned over centered.
+- Three equal card columns → replace with 2-col zig-zag, asymmetric grid, horizontal scroll, masonry.
+- `height: 100vh` → `min-height: 100dvh` (iOS Safari viewport bug).
+- Complex flexbox percentage math → CSS Grid.
+- No max-width container → add 1200-1440px container.
+- Cards of equal height forced by flexbox → variable heights or masonry.
+- Uniform border-radius → vary: tighter inner, softer containers.
+- No overlap or depth → negative margins, layering.
+- Symmetrical vertical padding → adjust optically; bottom usually larger.
+- Dashboard always left sidebar → try top nav, command menu, collapsible panel.
+- Missing whitespace → double spacing.
+- Buttons not bottom-aligned in card groups → pin to bottom for clean horizontal line.
+- Feature lists starting at different Y positions → align above-list spacing, fixed-height title block.
+- Inconsistent vertical rhythm → align shared elements (titles, prices, buttons) across items.
+- Mathematically centered but optically wrong → adjust 1-2px.
+
+## Interactivity & States Audit
+
+- No hover states on buttons → add background shift, slight scale, or translate.
+- No active/pressed feedback → `scale(0.98)` or `translateY(1px)` on press.
+- Instant transitions → add 200-300ms smooth transitions.
+- Missing focus ring → accessibility requirement, add visible indicators.
+- No loading states → replace generic spinners with skeletal loaders matching layout shape.
+- No empty states → compose a "getting started" view.
+- No error states → inline clear messages (no `window.alert()`).
+- Dead links → either link real destinations or disable visually.
+- No current-page indicator in nav → style active link differently.
+- Scroll jumping → `scroll-behavior: smooth`.
+- Animating `top`, `left`, `width`, `height` → switch to `transform` + `opacity` (GPU-accelerated).
+
+## Content Audit
+
+- Generic names (John Doe, Jane Smith) → diverse realistic names.
+- Fake round numbers (99.99%, 50%, $100.00) → organic data (47.2%, $99.00, +1 (312) 847-1928).
+- Placeholder brands (Acme, Nexus, SmartFlow) → contextual believable names.
+- AI copywriting clichés → never "Elevate", "Seamless", "Unleash", "Next-Gen", "Game-changer", "Delve", "Tapestry", "In the world of...".
+- Exclamation marks in success messages → remove, be confident not loud.
+- "Oops!" error messages → direct: "Connection failed. Please try again."
+- Passive voice → active voice.
+- All blog dates identical → randomize.
+- Same avatar for multiple users → unique assets.
+- Lorem Ipsum → real draft copy.
+- Title Case On Every Header → sentence case instead.
+
+## Component Patterns Audit
+
+- Generic card (border + shadow + white bg) → remove border, or only background, or only spacing. Cards only when elevation communicates hierarchy.
+- Always one filled + one ghost button → add text links or tertiary styles.
+- Pill-shaped "New" / "Beta" badges → square badges, flags, plain text labels.
+- Accordion FAQ sections → side-by-side list, searchable help, inline progressive disclosure.
+- 3-card carousel testimonials → masonry, embedded social posts, single rotating quote.
+- Pricing table with 3 towers → highlight recommended tier with color + emphasis, not just height.
+- Modals for everything → inline editing, slide-over, expandable sections.
+- Avatar circles exclusively → try squircles or rounded squares.
+- Sun/moon dark toggle → dropdown, system preference, settings integration.
+- Footer link farm with 4 columns → simplify to main paths + legal-required.
+
+## Iconography Audit
+
+- Lucide or Feather exclusively → Phosphor, Heroicons, custom set.
+- Rocketship for "Launch", shield for "Security" → less obvious metaphors (bolt, fingerprint, spark, vault).
+- Inconsistent stroke widths → standardize to one weight.
+- Missing favicon → include branded favicon.
+- Stock "diverse team" photos → real team photos, candid shots, or consistent illustration style.
+
+## Code Quality Audit
+
+- Div soup → semantic HTML (`<nav>`, `<main>`, `<article>`, `<aside>`, `<section>`).
+- Inline styles mixed with CSS classes → move to project's styling system.
+- Hardcoded pixel widths → relative units (`%`, `rem`, `em`, `max-width`).
+- Missing alt text → describe content for screen readers (never `alt=""` or `alt="image"` on meaningful images).
+- Arbitrary z-index (`9999`) → clean z-index scale in theme/variables.
+- Commented-out dead code → remove debug artifacts.
+- Import hallucinations → check `package.json` for every import.
+- Missing meta tags → `<title>`, `description`, `og:image`, social sharing.
+
+## Strategic Omissions (What AI Forgets)
+
+- No legal links → add privacy + terms in footer.
+- No "back" navigation → every page needs a way back.
+- No custom 404 page → design helpful branded "page not found".
+- No form validation → client-side emails, required fields, format checks.
+- No "skip to content" link → essential for keyboard users.
+- No cookie consent → if required by jurisdiction.
+
+## Fix Priority (for maximum visual impact, minimum risk)
+
+1. **Font swap** — biggest instant improvement, lowest risk
+2. **Color palette cleanup** — remove clashing or oversaturated colors
+3. **Hover and active states** — interface feels alive
+4. **Layout and spacing** — proper grid, max-width, consistent padding
+5. **Replace generic components** — swap cliché patterns for modern alternatives
+6. **Add loading, empty, error states** — feels finished
+7. **Polish typography scale and spacing** — premium final touch
+
+## Rules (non-negotiable)
+
+- Work with existing tech stack. Do NOT migrate frameworks or styling libraries.
+- Do NOT break existing functionality. Test after every change.
+- Before importing any new library, check the project's dependency file first.
+- If project uses Tailwind, check version (v3 vs v4) before modifying config.
+- If no framework, use vanilla CSS.
+- Keep changes reviewable and focused. Small targeted improvements over big rewrites.

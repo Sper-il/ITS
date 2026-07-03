@@ -1,0 +1,12 @@
+{
+  "trained_at": "2026-06-14T09:36:34.875951",
+  "input_file": "C:\\Users\\Admin\\Downloads\\ITS\\TRAFFIC_PROCESSING\\scripts\\outputs\\train_features.csv",
+  "num_features": 149,
+  "target_col": "LOS",
+  "val_ratio": 0.2,
+  "split_type": "time_based",
+  "n_cv_folds": 3,
+  "random_state": 42,
+  "train_time_sec": 234.3,
+  "sklearn_version": "1.7.2"
+}

@@ -1,0 +1,13 @@
+{
+  "created_at": "2026-06-21T12:22:55",
+  "graph": {
+    "nodes": 394905,
+    "edges": 413362
+  },
+  "shapes": {
+    "nodes": 394905,
+    "segments": 413362,
+    "coords_indexed": 394905,
+    "streets": 87293
+  }
+}

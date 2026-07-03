@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ITS Traffic LOS - Bảng điều khiển Tổng quan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .glass-panel {
+            background: rgba(18, 33, 49, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .los-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+        .histogram-bar {
+            transition: height 0.3s ease;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-primary-container": "#eeefff",
+                "inverse-primary": "#0053db",
+                "on-secondary-fixed": "#001a42",
+                "surface-container-low": "#0d1c2d",
+                "primary": "#b4c5ff",
+                "surface-container-high": "#1c2b3c",
+                "on-error": "#690005",
+                "outline": "#8d90a0",
+                "primary-container": "#2563eb",
+                "on-secondary-fixed-variant": "#004395",
+                "tertiary-container": "#bc4800",
+                "on-tertiary-fixed-variant": "#7d2d00",
+                "primary-fixed-dim": "#b4c5ff",
+                "surface-dim": "#051424",
+                "secondary-fixed": "#d8e2ff",
+                "surface-variant": "#273647",
+                "secondary-container": "#0566d9",
+                "on-secondary-container": "#e6ecff",
+                "on-tertiary-container": "#ffede6",
+                "surface-container-lowest": "#010f1f",
+                "on-primary-fixed-variant": "#003ea8",
+                "secondary-fixed-dim": "#adc6ff",
+                "on-secondary": "#002e6a",
+                "surface-container": "#122131",
+                "error": "#ffb4ab",
+                "on-error-container": "#ffdad6",
+                "surface-container-highest": "#273647",
+                "tertiary-fixed": "#ffdbcd",
+                "on-primary-fixed": "#00174b",
+                "tertiary-fixed-dim": "#ffb596",
+                "surface-tint": "#b4c5ff",
+                "error-container": "#93000a",
+                "background": "#051424",
+                "on-primary": "#002a78",
+                "tertiary": "#ffb596",
+                "on-tertiary-fixed": "#360f00",
+                "surface": "#051424",
+                "on-surface-variant": "#c3c6d7",
+                "inverse-surface": "#d4e4fa",
+                "on-tertiary": "#581e00",
+                "surface-bright": "#2c3a4c",
+                "secondary": "#adc6ff",
+                "on-surface": "#d4e4fa",
+                "on-background": "#d4e4fa",
+                "outline-variant": "#434655",
+                "inverse-on-surface": "#233143",
+                "primary-fixed": "#dbe1ff"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "spacing": {
+                "panel-padding": "20px",
+                "margin-page": "24px",
+                "stack-gap": "8px",
+                "unit": "4px",
+                "gutter": "16px"
+              },
+              "fontFamily": {
+                "body-sm": ["IBM Plex Sans"],
+                "mono-data": ["IBM Plex Mono"],
+                "section-label": ["IBM Plex Sans"],
+                "display-lg": ["IBM Plex Sans"],
+                "headline-sm": ["IBM Plex Sans"],
+                "body-md": ["IBM Plex Sans"],
+                "headline-md": ["IBM Plex Sans"]
+              },
+              "fontSize": {
+                "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                "mono-data": ["13px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "500"}],
+                "section-label": ["0.62rem", {"lineHeight": "1rem", "letterSpacing": "0.10em", "fontWeight": "700"}],
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "600"}],
+                "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden h-screen flex">
+<!-- SideNavBar (Persistent) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container/90 backdrop-blur-xl border-r border-outline-variant/10 shadow-lg flex flex-col gap-stack-gap p-panel-padding z-50">
+<div class="flex items-center gap-3 mb-6">
+<div class="font-headline-sm text-headline-sm font-bold text-on-primary-container bg-primary-container rounded-lg p-2">ITS</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary leading-tight">Chỉ số LOS Giao thông</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">TP.HCM · VN</p>
+</div>
+</div>
+<div class="mt-auto pt-6 space-y-4">
+<div class="bg-primary/20 rounded-lg p-3 border border-primary/20 text-center">
+<span id="sidebar-accuracy" class="text-primary font-mono-data text-mono-data">Độ chính xác 75.1%</span>
+</div>
+<div class="text-on-surface-variant font-body-md px-4 py-2 flex items-center gap-3 hover:bg-surface-variant/50 transition-colors cursor-pointer">
+<span class="material-symbols-outlined animate-spin">sync</span>
+<span>Làm mới trực tiếp</span>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-[280px] flex-1 flex flex-col h-full overflow-y-auto">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-page py-4 max-w-full bg-surface-container-high/90 border-b border-outline-variant/10 backdrop-blur-md sticky top-0 z-40">
+<div class="flex items-center gap-8">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Chỉ số LOS · TP.HCM</h2>
+<nav class="hidden md:flex gap-6">
+<a class="text-primary border-b-2 border-primary font-bold pb-1 text-body-md" href="/overview">Tổng quan</a>
+<a class="text-on-surface-variant font-body-md pb-1 hover:text-primary transition-all" href="/predict">Dự đoán nhanh</a>
+<a class="text-on-surface-variant font-body-md pb-1 hover:text-primary transition-all" href="/routing">Tìm đường</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-error/10 border border-error/30 rounded-full">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span class="text-error font-mono-data text-[11px] font-bold">TRỰC TIẾP</span>
+</div>
+</div>
+</header>
+<!-- Content Body -->
+<div class="px-margin-page py-6 flex flex-col gap-6 max-w-[1440px]">
+<!-- Section Label -->
+<div class="flex items-center gap-3">
+<div class="h-4 w-1 bg-primary"></div>
+<span class="font-section-label text-section-label tracking-[0.2em] text-on-surface-variant uppercase">TỔNG QUAN · 1000 mẫu · dự đoán trực tiếp</span>
+</div>
+<!-- Row 1: Donut + KPIs -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Left: Donut Chart -->
+<div class="col-span-12 lg:col-span-7 glass-panel rounded-xl p-panel-padding relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-20">
+<span class="material-symbols-outlined text-6xl">pie_chart</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-6">Phân bổ LOS trên toàn mạng lưới</h3>
+<div class="flex items-center justify-between">
+<!-- Simulated Donut -->
+<div class="relative w-48 h-48 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="transparent" r="15.915" stroke="rgba(255,255,255,0.05)" stroke-width="3"></circle>
+<!-- A 12% -->
+<circle id="donut-A" cx="18" cy="18" fill="transparent" r="15.915" stroke="#2563eb" stroke-dasharray="12 88" stroke-dashoffset="100" stroke-width="3.5"></circle>
+<!-- B 38% -->
+<circle id="donut-B" cx="18" cy="18" fill="transparent" r="15.915" stroke="#3b82f6" stroke-dasharray="38 62" stroke-dashoffset="88" stroke-width="3.5"></circle>
+<!-- C 27% -->
+<circle id="donut-C" cx="18" cy="18" fill="transparent" r="15.915" stroke="#60a5fa" stroke-dasharray="27 73" stroke-dashoffset="50" stroke-width="3.5"></circle>
+<!-- D 15% -->
+<circle id="donut-D" cx="18" cy="18" fill="transparent" r="15.915" stroke="#f97316" stroke-dasharray="15 85" stroke-dashoffset="23" stroke-width="3.5"></circle>
+<!-- E 6% -->
+<circle id="donut-E" cx="18" cy="18" fill="transparent" r="15.915" stroke="#ef4444" stroke-dasharray="6 94" stroke-dashoffset="8" stroke-width="3.5"></circle>
+<!-- F 2% -->
+<circle id="donut-F" cx="18" cy="18" fill="transparent" r="15.915" stroke="#b91c1c" stroke-dasharray="2 98" stroke-dashoffset="2" stroke-width="3.5"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span id="donut-center-count" class="font-mono-data text-2xl text-on-surface">1,000</span>
+<span class="font-section-label text-[10px] text-on-surface-variant uppercase">MẪU</span>
+</div>
+</div>
+<div class="flex-1 ml-12 grid grid-cols-2 gap-x-8 gap-y-3">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#2563eb]"></div>
+<span class="font-mono-data text-mono-data los-pct-A">A: 12%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#3b82f6]"></div>
+<span class="font-mono-data text-mono-data los-pct-B">B: 38%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#60a5fa]"></div>
+<span class="font-mono-data text-mono-data los-pct-C">C: 27%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#f97316]"></div>
+<span class="font-mono-data text-mono-data los-pct-D">D: 15%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#ef4444]"></div>
+<span class="font-mono-data text-mono-data los-pct-E">E: 6%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#b91c1c]"></div>
+<span class="font-mono-data text-mono-data los-pct-F">F: 2%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: KPI Tiles -->
+<div class="col-span-12 lg:col-span-5 grid grid-cols-2 grid-rows-2 gap-4">
+<div class="glass-panel rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-primary">
+<span class="font-section-label text-section-label text-on-surface-variant uppercase">Số mẫu</span>
+<span id="kpi-samples" class="font-mono-data text-2xl text-on-surface">1,000</span>
+</div>
+<div class="glass-panel rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-secondary">
+<span class="font-section-label text-section-label text-on-surface-variant uppercase">Độ tin cậy trung bình</span>
+<span id="kpi-mean-conf" class="font-mono-data text-2xl text-on-surface text-secondary">87.3%</span>
+</div>
+<!-- Dominant Class -->
+<div class="glass-panel rounded-xl p-4 flex flex-col justify-between group cursor-default">
+<span class="font-section-label text-section-label text-on-surface-variant uppercase">Lớp chiếm ưu thế</span>
+<div class="flex items-baseline gap-2">
+<span id="kpi-dominant-los" class="font-mono-data text-3xl font-bold text-[#60a5fa]">LOS C</span>
+<span id="kpi-dominant-name" class="font-body-sm text-on-surface-variant">Ổn định</span>
+</div>
+</div>
+<!-- Confidence Card -->
+<div class="glass-panel rounded-xl p-4 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="font-section-label text-section-label text-on-surface-variant uppercase">Độ tin cậy</span>
+<span id="kpi-conf-ratio" class="font-mono-data text-mono-data text-on-surface">0.87/1.00</span>
+</div>
+<div class="mt-4">
+<div class="los-bar w-full h-2">
+<div id="kpi-conf-bar" class="h-full bg-gradient-to-r from-primary to-secondary w-[87%]"></div>
+</div>
+<div class="flex justify-end mt-1">
+<span id="kpi-conf-pct" class="font-mono-data text-[10px] text-primary">87%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 2: Legend + F1 Score -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Legend -->
+<div class="glass-panel rounded-xl overflow-hidden">
+<div class="px-panel-padding py-3 border-b border-outline-variant/10 bg-surface-container-highest/20">
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase">Chú giải Mức độ phục vụ</h4>
+</div>
+<div class="p-panel-padding space-y-3">
+<div class="flex items-center justify-between text-body-sm py-1 border-b border-outline-variant/5">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-[#2563eb]"></div>
+<span class="font-mono-data font-bold w-4">A</span>
+<span>Rất tốt (Tự do)</span>
+</div>
+<span class="font-mono-data text-on-surface-variant">120 pts</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1 border-b border-outline-variant/5">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-[#3b82f6]"></div>
+<span class="font-mono-data font-bold w-4">B</span>
+<span>Tốt (Ổn định)</span>
+</div>
+<span class="font-mono-data text-on-surface-variant">380 pts</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1 border-b border-outline-variant/5">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-[#60a5fa]"></div>
+<span class="font-mono-data font-bold w-4">C</span>
+<span>Ổn định (Trung bình)</span>
+</div>
+<span class="font-mono-data text-on-surface-variant">270 pts</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1 border-b border-outline-variant/5">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-[#f97316]"></div>
+<span class="font-mono-data font-bold w-4">D</span>
+<span>Kém (Gần tắc)</span>
+</div>
+<span class="font-mono-data text-on-surface-variant">150 pts</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1 border-b border-outline-variant/5">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-[#ef4444]"></div>
+<span class="font-mono-data font-bold w-4">E</span>
+<span>Rất kém (Tắc nghẽn)</span>
+</div>
+<span class="font-mono-data text-on-surface-variant">60 pts</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 rounded-full bg-[#b91c1c]"></div>
+<span class="font-mono-data font-bold w-4">F</span>
+<span>Quá tải (Đứng im)</span>
+</div>
+<span class="font-mono-data text-on-surface-variant">20 pts</span>
+</div>
+</div>
+</div>
+<!-- F1 Score -->
+<div class="glass-panel rounded-xl overflow-hidden">
+<div class="px-panel-padding py-3 border-b border-outline-variant/10 bg-surface-container-highest/20">
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase">Điểm F1 cho từng lớp</h4>
+</div>
+<div class="p-panel-padding space-y-5">
+<div class="space-y-1">
+<div class="flex justify-between text-[11px] font-mono-data">
+<span>Lớp A</span>
+<span>89%</span>
+</div>
+<div class="los-bar w-full">
+<div class="h-full bg-primary w-[89%]"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[11px] font-mono-data">
+<span>Lớp B</span>
+<span>82%</span>
+</div>
+<div class="los-bar w-full">
+<div class="h-full bg-primary w-[82%]"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[11px] font-mono-data">
+<span>Lớp C</span>
+<span>78%</span>
+</div>
+<div class="los-bar w-full">
+<div class="h-full bg-primary w-[78%]"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[11px] font-mono-data">
+<span>Lớp D</span>
+<span>71%</span>
+</div>
+<div class="los-bar w-full">
+<div class="h-full bg-primary w-[71%]"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[11px] font-mono-data">
+<span>Lớp E</span>
+<span>64%</span>
+</div>
+<div class="los-bar w-full">
+<div class="h-full bg-primary w-[64%]"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[11px] font-mono-data">
+<span>Lớp F</span>
+<span>58%</span>
+</div>
+<div class="los-bar w-full">
+<div class="h-full bg-primary w-[58%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 3: Confidence Histogram -->
+<div class="glass-panel rounded-xl p-panel-padding mb-8">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase">Biểu đồ phân phối Độ tin cậy</h4>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-primary"></div>
+<span class="text-[10px] font-mono-data text-on-surface-variant">MẬT ĐỘ DỰ ĐOÁN</span>
+</div>
+</div>
+</div>
+<div id="confidence-histogram" class="h-40 flex items-end justify-between gap-[2px]">
+<!-- 24 Bins generated dynamically by overview_app.js -->
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 10%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 15%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 12%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 8%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 20%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 25%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 35%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 45%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 30%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 55%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 65%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 70%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 85%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 95%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 90%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 80%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 75%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 60%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 50%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 40%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 30%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 25%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 15%"></div>
+<div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 10%"></div>
+</div>
+<div class="flex justify-between mt-4 border-t border-outline-variant/10 pt-2">
+<span class="text-[10px] font-mono-data text-on-surface-variant">ĐỘ TIN CẬY 0.00</span>
+<span class="text-[10px] font-mono-data text-on-surface-variant text-center">0.50</span>
+<span class="text-[10px] font-mono-data text-on-surface-variant">ĐỘ TIN CẬY 1.00</span>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="flex justify-between items-center px-margin-page py-unit w-full bg-surface-container-lowest border-t border-outline-variant/10 mt-auto">
+<div class="flex items-center gap-4">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Nghiên cứu ITS · Bảng điều khiển giao thông thông minh TP.HCM</span>
+<span class="text-outline-variant">|</span>
+<span class="font-mono-data text-mono-data text-on-surface-variant">v2026.07 · chính thức</span>
+</div>
+<div class="flex gap-6">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Tài liệu API</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Trạng thái hệ thống</a>
+</div>
+</footer>
+</main>
+<script src="api.js"></script>
+<script src="overview_app.js"></script>
+<script>
+        // Micro-interaction for the dashboard items
+        document.querySelectorAll('.glass-panel').forEach(panel => {
+            panel.addEventListener('mouseenter', () => {
+                panel.style.boxShadow = '0 10px 30px -12px rgba(37, 99, 235, 0.2)';
+            });
+            panel.addEventListener('mouseleave', () => {
+                panel.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body></html>

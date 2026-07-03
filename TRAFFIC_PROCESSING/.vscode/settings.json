@@ -1,0 +1,12 @@
+{
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/scripts",
+    "${workspaceFolder}/tests"
+  ],
+  "python.analysis.autoImportPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/scripts",
+    "${workspaceFolder}/tests"
+  ]
+}

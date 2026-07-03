@@ -1,0 +1,7 @@
+{
+  "_note": "predict_single.json SHA khác 0x0651... (legacy) vs 0x10d6... (refactor) do float64 -> str repr precision (chu so cuoi). Gia tri so giong nhau den 15-16 digit. Day khong phai logic regression — chi la bieu dien text. 3/4 snapshot khớp 100% byte-for-byte.",
+  "edge_features_tiny.json": "32fe805a9a7efa37a97069c7fd28011551ca919236af709fe244434680f97b39",
+  "live_predictions_50.json": "b2924c3a348a53fd0dfe3b45f08efa8d5fb8678781f75f1dd6b91f97290bcee7",
+  "predict_single.json": "0651d839bcc98034c84340362a59bfc29fd0b3dc0b4785f4072f03f982a2e078",
+  "routing_graph_meta.json": "6a016acf8fe6623bce318b63b9d86dd45378f3005307b3e91c3e5a22689be0d0"
+}

@@ -1,0 +1,40 @@
+{
+  "target_cols": [
+    "LOS"
+  ],
+  "drop_cols": [
+    "date",
+    "period",
+    "segment_id",
+    "street_id",
+    "s_node_id",
+    "e_node_id",
+    "is_outlier"
+  ],
+  "cat_cols": [
+    "street_type",
+    "street_name",
+    "period",
+    "time_of_day",
+    "street_catalog_type"
+  ],
+  "num_cols": [
+    "length_norm",
+    "max_velocity_norm",
+    "street_level_norm",
+    "hist_vel_mean_norm",
+    "hist_vel_std_norm",
+    "hist_vel_max_norm",
+    "hist_vel_min_norm",
+    "hist_vel_last_norm",
+    "node_degree_norm",
+    "start_degree_norm",
+    "end_degree_norm",
+    "period_hour_norm",
+    "period_minutes_of_day_norm",
+    "hour_sin",
+    "hour_cos",
+    "is_holiday",
+    "is_rush_hour"
+  ]
+}

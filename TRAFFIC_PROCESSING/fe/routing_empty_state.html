@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ITS Traffic LOS - Routing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#eeefff",
+                        "inverse-primary": "#0053db",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-container-low": "#0d1c2d",
+                        "primary": "#b4c5ff",
+                        "surface-container-high": "#1c2b3c",
+                        "on-error": "#690005",
+                        "outline": "#8d90a0",
+                        "primary-container": "#2563eb",
+                        "on-secondary-fixed-variant": "#004395",
+                        "tertiary-container": "#bc4800",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-dim": "#051424",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-variant": "#273647",
+                        "secondary-container": "#0566d9",
+                        "on-secondary-container": "#e6ecff",
+                        "on-tertiary-container": "#ffede6",
+                        "surface-container-lowest": "#010f1f",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-secondary": "#002e6a",
+                        "surface-container": "#122131",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#273647",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-primary-fixed": "#00174b",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "surface-tint": "#b4c5ff",
+                        "error-container": "#93000a",
+                        "background": "#051424",
+                        "on-primary": "#002a78",
+                        "tertiary": "#ffb596",
+                        "on-tertiary-fixed": "#360f00",
+                        "surface": "#051424",
+                        "on-surface-variant": "#c3c6d7",
+                        "inverse-surface": "#d4e4fa",
+                        "on-tertiary": "#581e00",
+                        "surface-bright": "#2c3a4c",
+                        "secondary": "#adc6ff",
+                        "on-surface": "#d4e4fa",
+                        "on-background": "#d4e4fa",
+                        "outline-variant": "#434655",
+                        "inverse-on-surface": "#233143",
+                        "primary-fixed": "#dbe1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "panel-padding": "20px",
+                        "margin-page": "24px",
+                        "stack-gap": "8px",
+                        "unit": "4px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["IBM Plex Sans"],
+                        "mono-data": ["IBM Plex Mono"],
+                        "section-label": ["IBM Plex Sans"],
+                        "display-lg": ["IBM Plex Sans"],
+                        "headline-sm": ["IBM Plex Sans"],
+                        "body-md": ["IBM Plex Sans"],
+                        "headline-md": ["IBM Plex Sans"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "mono-data": ["13px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "500"}],
+                        "section-label": ["0.62rem", {"lineHeight": "1rem", "letterSpacing": "0.10em", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #051424;
+            color: #d4e4fa;
+            overflow: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(21, 33, 61, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .map-container {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(141, 144, 160, 0.3);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="flex h-screen w-full font-body-md overflow-hidden">
+<!-- SideNavBar (Predicted Component from JSON) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container/90 backdrop-blur-xl border-r border-outline-variant/10 flex flex-col gap-stack-gap p-panel-padding z-50 shadow-lg">
+<div class="flex items-center gap-3 mb-6">
+<div class="font-headline-sm text-headline-sm font-bold text-on-primary-container bg-primary-container rounded-lg p-2 flex items-center justify-center min-w-[40px] h-[40px]">
+<span class="material-symbols-outlined">traffic</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold leading-tight">ITS Traffic LOS</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">HCM City · VN</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<div class="text-on-surface-variant font-body-md px-4 py-2 hover:bg-surface-variant/50 transition-colors rounded-lg cursor-pointer flex items-center gap-3">
+<span class="material-symbols-outlined">settings_input_component</span>
+                RF Model
+            </div>
+<div class="text-on-surface-variant font-body-md px-4 py-2 hover:bg-surface-variant/50 transition-colors rounded-lg cursor-pointer flex items-center gap-3">
+<span class="material-symbols-outlined">account_tree</span>
+                XGBoost
+            </div>
+<div class="text-on-surface-variant font-body-md px-4 py-2 hover:bg-surface-variant/50 transition-colors rounded-lg cursor-pointer flex items-center gap-3">
+<span class="material-symbols-outlined">bolt</span>
+                LightGBM
+            </div>
+<div class="text-on-surface-variant font-body-md px-4 py-2 hover:bg-surface-variant/50 transition-colors rounded-lg cursor-pointer flex items-center gap-3">
+<span class="material-symbols-outlined">query_stats</span>
+                CatBoost
+            </div>
+</nav>
+
+<div class="glass-panel border-dashed border-2 border-outline-variant/30 rounded-xl p-4 flex flex-col items-center justify-center gap-3 text-center mb-4 mt-2">
+<div class="w-12 h-12 bg-surface-container-highest rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl text-outline-variant/50">keep_pin</span>
+</div>
+<div>
+<h3 class="text-[14px] font-bold text-on-surface mb-1">Chưa có tuyến đường</h3>
+<p class="text-on-surface-variant font-body-sm text-[11px] leading-relaxed">Chọn điểm đi và điểm đến để tính toán tuyến đường tối ưu dựa trên LOS.</p>
+</div>
+<button class="mt-1 px-3 py-1.5 border border-primary/20 text-primary rounded-lg font-medium hover:bg-primary/5 transition-all text-[11px] flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+    Vị trí hiện tại
+</button>
+</div>
+
+<div class="mt-auto space-y-4">
+<div class="bg-primary/5 rounded-xl p-4 border border-primary/10">
+<div class="flex items-center justify-between mb-2">
+<span class="font-section-label text-section-label uppercase tracking-widest text-primary">Model Status</span>
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+</div>
+<div class="text-headline-sm font-bold text-primary">Accuracy 75.1%</div>
+<div class="w-full bg-outline-variant/20 h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary h-full w-[75%]"></div>
+</div>
+</div>
+<div class="text-on-surface-variant font-body-md px-4 py-2 hover:bg-surface-variant/50 transition-colors rounded-lg cursor-pointer flex items-center gap-3">
+<span class="material-symbols-outlined">sync</span>
+                Live Refresh
+            </div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col ml-[280px]">
+<!-- TopAppBar (Predicted Component from JSON) -->
+<header class="bg-surface-container-high/90 backdrop-blur-md border-b border-outline-variant/10 flex justify-between items-center w-full px-margin-page py-4 max-w-full z-40 sticky top-0">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">Traffic LOS · HCMC</span>
+<nav class="flex gap-6">
+<a class="text-on-surface-variant font-body-md pb-1 hover:text-primary transition-all" href="/overview">Overview</a>
+<a class="text-on-surface-variant font-body-md pb-1 hover:text-primary transition-all" href="/predict">Quick Predict</a>
+<a class="text-primary border-b-2 border-primary font-bold pb-1" href="/routing">Routing</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-error-container/20 text-error rounded-full border border-error/20">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-error"></span>
+</span>
+<span class="font-mono-data text-mono-data">LIVE</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-all p-2 rounded-full hover:bg-surface-variant/30">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all p-2 rounded-full hover:bg-surface-variant/30">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary/20 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional close-up profile portrait of a data scientist in a modern dark-lit office setting. The person is looking thoughtfully at a holographic interface showing urban data maps. The lighting is low-key with cool blue and neon cyan highlights reflecting on their glasses, reinforcing the high-tech, analytical theme of the HCM traffic intelligence dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0MwC3qRwZ0-bdi3j9TqPHe35VCXx1c6_05KafprjjlyesG0L9QpESKS8ukBzBT2viRkmER9JkRbYbJYh98yW1dBSBvADrHt_VXt6_5hhktbei2JO8XqP_Ld9N2Ls_pmgWpC8t1_lxWfbMxYWBfJx3uVLtGevty-_Pp7XNCTn-8NTh-LFpxEOfmwgsPSn4rxo9hTTWdBKqIAuxJrLaP_6rHAOE-2m8Hv2Fgp_hEyJheH4L0Zs65PEBpDS8vyvUXjbbPVMh_mBr1uY"/>
+</div>
+</div>
+</header>
+<!-- Dynamic Success Banner -->
+<div id="graph-banner" class="bg-surface-container-low px-margin-page py-2 border-b border-outline-variant/5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-green-500 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Đồ thị: <span class="font-bold">8,234</span> nút, <span class="font-bold">19,872</span> cạnh</span>
+</div>
+<div class="text-on-surface-variant text-[11px] font-mono-data uppercase tracking-widest">v2026.07.A2 Build System Connected</div>
+</div>
+<!-- Layout Content Split -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Map and Control Canvas -->
+<div class="flex-1 relative map-container overflow-hidden bg-background">
+<!-- Map Layer Placeholder -->
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-60" data-alt="A high-fidelity satellite imagery map of Ho Chi Minh City, Vietnam, focused on the central districts and the winding Saigon River. The map is presented in a sophisticated dark tile style with translucent overlays showing traffic arteries highlighted in subtle glowing filaments. The overall aesthetic is clean, technical, and data-centric, fitting a professional urban traffic management interface." data-location="Ho Chi Minh City" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1JfY1cH0TwfqdBFSpVORxDj3LUV3faZQZ3aBZnQPffqDIO5RIW5NArgidg5Zf10GqKqg-FanvAGJgDCXBbDByl-0HcbeJIj4GlKYA-ze38uRiW41IvFBU2ZStxy9_WgcDRqLY2Rd-OEWkUym1AjG9m9l0LJ1lfL4akld4z3Kzx6q4tHN31cYIFjXiNONmxJWChU3AgkoD-H1zxdS_pE4DYAnxKoH3y2IXCPmMEybxFapil6Qs05dkMAb0ieyer-ISFo9AHj50P3I"/>
+</div>
+<!-- Floating Control Bar -->
+<div class="absolute top-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 p-3 glass-panel rounded-full shadow-2xl">
+<div class="flex items-center gap-2 px-4 py-2 bg-surface-container-highest/50 rounded-full border border-outline-variant/20 w-48">
+<div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+<span class="text-on-surface-variant text-sm font-body-md truncate">Điểm xuất phát...</span>
+</div>
+<button id="swap-btn" class="w-10 h-10 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center hover:scale-105 transition-transform active:scale-95 shadow-lg shadow-primary-container/20">
+<span class="material-symbols-outlined">swap_horiz</span>
+</button>
+<div class="flex items-center gap-2 px-4 py-2 bg-surface-container-highest/50 rounded-full border border-outline-variant/20 w-48">
+<div class="w-2.5 h-2.5 rounded-full bg-error shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
+<span class="text-on-surface-variant text-sm font-body-md truncate">Điểm đến...</span>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant/20 mx-1"></div>
+<div class="flex items-center gap-2 px-4 py-2 bg-surface-container-highest/50 rounded-full border border-outline-variant/20 cursor-pointer hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-primary text-sm">directions_car</span>
+<span class="text-on-surface text-sm font-medium">Ô tô</span>
+<span class="material-symbols-outlined text-xs text-on-surface-variant">expand_more</span>
+</div>
+<button id="find-route-btn" class="px-6 py-2 bg-primary-container text-on-primary-container rounded-full font-bold text-sm hover:brightness-110 transition-all active:scale-95" disabled="">
+                        Tìm đường
+                    </button>
+</div>
+<!-- Empty State Bottom Drawer moved to Sidebar -->
+<!-- Map Tools (Right Side) -->
+<div class="absolute right-6 top-24 z-30 flex flex-col gap-2">
+<button class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface">add</span>
+</button>
+<button class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface">remove</span>
+</button>
+<div class="h-2"></div>
+<button class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface">my_location</span>
+</button>
+<button class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface">layers</span>
+</button>
+</div>
+</div>
+<!-- Routing Sidebar (Input Panel) -->
+<div class="w-[320px] bg-surface-container border-l border-outline-variant/10 flex flex-col z-40">
+<div class="p-6 border-b border-outline-variant/10">
+<h2 class="font-section-label text-section-label uppercase tracking-widest text-on-surface-variant mb-6">Thiết lập lộ trình</h2>
+<div class="space-y-4">
+<div class="relative group">
+<label class="text-[10px] font-bold text-primary uppercase absolute -top-2 left-3 px-1 bg-surface-container z-10">Xuất phát</label>
+<div class="flex gap-2">
+<div class="flex-1 bg-surface-container-low border border-outline-variant/20 rounded-lg p-3 flex items-center gap-3 group-focus-within:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-green-500 text-sm">circle</span>
+<input id="input-start" class="bg-transparent border-none p-0 text-sm text-on-surface placeholder:text-outline-variant/60 focus:ring-0 w-full" placeholder="Chọn điểm đi..." type="text"/>
+</div>
+<button data-role="start" class="w-10 h-[46px] bg-surface-container-low border border-outline-variant/20 rounded-lg flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">gps_fixed</span>
+</button>
+</div>
+</div>
+<div class="relative group">
+<label class="text-[10px] font-bold text-error uppercase absolute -top-2 left-3 px-1 bg-surface-container z-10">Điểm đến</label>
+<div class="flex gap-2">
+<div class="flex-1 bg-surface-container-low border border-outline-variant/20 rounded-lg p-3 flex items-center gap-3 group-focus-within:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-error text-sm">location_on</span>
+<input id="input-end" class="bg-transparent border-none p-0 text-sm text-on-surface placeholder:text-outline-variant/60 focus:ring-0 w-full" placeholder="Chọn điểm đến..." type="text"/>
+</div>
+<button data-role="end" class="w-10 h-[46px] bg-surface-container-low border border-outline-variant/20 rounded-lg flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">map</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
+<!-- Collapsed Expanders -->
+<div class="border border-outline-variant/10 rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">tune</span>
+<span class="text-sm font-medium">Tùy chọn nâng cao</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</button>
+</div>
+<div class="border border-outline-variant/10 rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">history</span>
+<span class="text-sm font-medium">Lịch sử tìm kiếm</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</button>
+</div>
+<div class="border border-outline-variant/10 rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">bookmark</span>
+<span class="text-sm font-medium">Địa điểm đã lưu</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</button>
+</div>
+</div>
+<div class="p-6 bg-surface-container-lowest border-t border-outline-variant/10">
+<p class="text-[11px] text-on-surface-variant/70 leading-relaxed">
+                        Lộ trình sẽ được tính toán dựa trên dữ liệu Level of Service (LOS) thời gian thực của mạng lưới giao thông TP.HCM.
+                    </p>
+</div>
+</div>
+</div>
+<!-- Footer (Predicted Component from JSON) -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant/10 flex justify-between items-center px-margin-page py-unit w-full z-40">
+<span class="font-body-sm text-body-sm text-on-surface-variant">ITS Research · HCMC traffic intelligence dashboard</span>
+<div class="flex gap-4">
+<span class="font-mono-data text-mono-data text-on-surface-variant/60">Node: VM-HCM-04</span>
+<span class="font-mono-data text-mono-data text-primary">v2026.07 · production</span>
+</div>
+</footer>
+</main>
+<script src="api.js"></script>
+<script src="routing_app.js"></script>
+<script>
+        // Micro-interactions for input focus
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('border-primary');
+                input.parentElement.classList.add('shadow-[0_0_10px_rgba(37,99,235,0.1)]');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('border-primary');
+                input.parentElement.classList.remove('shadow-[0_0_10px_rgba(37,99,235,0.1)]');
+            });
+        });
+    </script>
+</body></html>

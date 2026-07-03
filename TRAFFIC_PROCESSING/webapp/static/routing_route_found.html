@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chỉ số LOS · Bảng điều khiển Tìm đường</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Leaflet dark map tiles -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- Shared Style Configurations -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-container": "#eeefff",
+                    "inverse-primary": "#0053db",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-container-low": "#0d1c2d",
+                    "primary": "#b4c5ff",
+                    "surface-container-high": "#1c2b3c",
+                    "on-error": "#690005",
+                    "outline": "#8d90a0",
+                    "primary-container": "#2563eb",
+                    "on-secondary-fixed-variant": "#004395",
+                    "tertiary-container": "#bc4800",
+                    "on-tertiary-fixed-variant": "#7d2d00",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "surface-dim": "#051424",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-variant": "#273647",
+                    "secondary-container": "#0566d9",
+                    "on-secondary-container": "#e6ecff",
+                    "on-tertiary-container": "#ffede6",
+                    "surface-container-lowest": "#010f1f",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-secondary": "#002e6a",
+                    "surface-container": "#122131",
+                    "error": "#ffb4ab",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-highest": "#273647",
+                    "tertiary-fixed": "#ffdbcd",
+                    "on-primary-fixed": "#00174b",
+                    "tertiary-fixed-dim": "#ffb596",
+                    "surface-tint": "#b4c5ff",
+                    "error-container": "#93000a",
+                    "background": "#051424",
+                    "on-primary": "#002a78",
+                    "tertiary": "#ffb596",
+                    "on-tertiary-fixed": "#360f00",
+                    "surface": "#051424",
+                    "on-surface-variant": "#c3c6d7",
+                    "inverse-surface": "#d4e4fa",
+                    "on-tertiary": "#581e00",
+                    "surface-bright": "#2c3a4c",
+                    "secondary": "#adc6ff",
+                    "on-surface": "#d4e4fa",
+                    "on-background": "#d4e4fa",
+                    "outline-variant": "#434655",
+                    "inverse-on-surface": "#233143",
+                    "primary-fixed": "#dbe1ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "panel-padding": "20px",
+                    "margin-page": "24px",
+                    "stack-gap": "8px",
+                    "unit": "4px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "body-sm": ["IBM Plex Sans"],
+                    "mono-data": ["IBM Plex Mono"],
+                    "section-label": ["IBM Plex Sans"],
+                    "display-lg": ["IBM Plex Sans"],
+                    "headline-sm": ["IBM Plex Sans"],
+                    "body-md": ["IBM Plex Sans"],
+                    "headline-md": ["IBM Plex Sans"]
+            },
+            "fontSize": {
+                    "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "mono-data": ["13px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "500"}],
+                    "section-label": ["0.62rem", {"lineHeight": "1rem", "letterSpacing": "0.10em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #051424;
+            color: #d4e4fa;
+            overflow: hidden;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-panel {
+            background: rgba(21, 33, 61, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .route-glow {
+            filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.6));
+        }
+        .pulse-ring {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .4; transform: scale(1.2); }
+        }
+        .los-a { background-color: #2563eb; }
+        .los-b { background-color: #3b82f6; }
+        .los-c { background-color: #60a5fa; }
+        .los-d { background-color: #f97316; }
+        .los-e { background-color: #ef4444; }
+        .los-f { background-color: #b91c1c; }
+        #leaflet-map { width: 100%; height: 100%; }
+        .leaflet-container { background: #0b1220; }
+        .leaflet-tile-pane { opacity: 0.85; }
+        .leaflet-control-zoom a {
+            background: rgba(21,33,61,0.95) !important;
+            color: #b4c5ff !important;
+            border-color: rgba(180,197,255,0.15) !important;
+        }
+        .leaflet-control-attribution {
+            background: rgba(5,20,36,0.7) !important;
+            color: rgba(180,197,255,0.5) !important;
+            font-size: 9px !important;
+        }
+        .leaflet-control-attribution a { color: rgba(180,197,255,0.7) !important; }
+    </style>
+</head>
+<body class="flex h-screen w-screen overflow-hidden">
+<!-- Sidebar Input Panel (added by fix #2/#3) -->
+<aside id="route-input-panel" class="w-[320px] bg-surface-container border-r border-outline-variant/10 flex flex-col z-40 flex-shrink-0">
+<div class="p-6 border-b border-outline-variant/10">
+<h2 class="font-section-label text-section-label uppercase tracking-widest text-on-surface-variant mb-6">Thiết lập lộ trình</h2>
+<div class="space-y-4">
+<!-- Start input -->
+<div class="relative group">
+<label class="text-[10px] font-bold text-primary uppercase absolute -top-2 left-3 px-1 bg-surface-container z-10">Xuất phát</label>
+<div class="flex gap-2">
+<div class="flex-1 bg-surface-container-low border border-outline-variant/20 rounded-lg p-3 flex items-center gap-3 group-focus-within:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-green-500 text-sm">circle</span>
+<input id="input-start" class="bg-transparent border-none p-0 text-sm text-on-surface placeholder:text-outline-variant/60 focus:ring-0 w-full" placeholder="Chọn điểm đi..." type="text"/>
+</div>
+<button data-role="start" class="w-10 h-[46px] bg-surface-container-low border border-outline-variant/20 rounded-lg flex items-center justify-center hover:bg-surface-container-highest transition-colors" title="Dùng vị trí hiện tại">
+<span class="material-symbols-outlined text-on-surface-variant">gps_fixed</span>
+</button>
+</div>
+</div>
+<!-- End input -->
+<div class="relative group">
+<label class="text-[10px] font-bold text-error uppercase absolute -top-2 left-3 px-1 bg-surface-container z-10">Điểm đến</label>
+<div class="flex gap-2">
+<div class="flex-1 bg-surface-container-low border border-outline-variant/20 rounded-lg p-3 flex items-center gap-3 group-focus-within:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-error text-sm">location_on</span>
+<input id="input-end" class="bg-transparent border-none p-0 text-sm text-on-surface placeholder:text-outline-variant/60 focus:ring-0 w-full" placeholder="Chọn điểm đến..." type="text"/>
+</div>
+<button data-role="end" class="w-10 h-[46px] bg-surface-container-low border border-outline-variant/20 rounded-lg flex items-center justify-center hover:bg-surface-container-highest transition-colors" title="Chọn trên bản đồ">
+<span class="material-symbols-outlined text-on-surface-variant">map</span>
+</button>
+</div>
+</div>
+<!-- Waypoints container (fix #6) -->
+<div id="waypoints-container" class="space-y-3"></div>
+<!-- Add waypoint button -->
+<button id="add-waypoint-btn" class="w-full h-9 bg-surface-container-low border border-dashed border-outline-variant/30 rounded-lg flex items-center justify-center gap-2 text-xs text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+                    Thêm điểm dừng
+                </button>
+<!-- Swap button + find button -->
+<div class="flex items-center gap-2 mt-2">
+<button id="swap-btn" class="w-10 h-10 bg-surface-container-low border border-outline-variant/20 rounded-lg flex items-center justify-center hover:bg-surface-container-highest transition-colors" title="Đảo chiều điểm đi/đến">
+<span class="material-symbols-outlined text-on-surface-variant">swap_horiz</span>
+</button>
+<!-- Vehicle selector (added by fix #3) -->
+<div class="relative flex-1">
+<button id="vehicle-btn" class="w-full h-10 bg-surface-container-low border border-outline-variant/20 rounded-lg flex items-center justify-between px-3 hover:bg-surface-container-highest transition-colors">
+<span class="flex items-center gap-2">
+<span id="vehicle-icon" class="material-symbols-outlined text-primary text-sm">directions_car</span>
+<span id="vehicle-label" class="text-on-surface text-sm font-medium">Ô tô</span>
+</span>
+<span class="material-symbols-outlined text-xs text-on-surface-variant">expand_more</span>
+</button>
+<div id="vehicle-menu" class="hidden absolute top-full left-0 right-0 mt-1 bg-surface-container-highest border border-outline-variant/30 rounded-lg shadow-2xl z-50 overflow-hidden">
+<button data-vehicle="car"       data-icon="directions_car"       data-label="Ô tô"      class="vehicle-option w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-primary/20 transition-colors text-left">
+<span class="material-symbols-outlined text-primary text-sm">directions_car</span><span>Ô tô</span>
+</button>
+<button data-vehicle="motorbike" data-icon="two_wheeler"          data-label="Xe máy"    class="vehicle-option w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-primary/20 transition-colors text-left">
+<span class="material-symbols-outlined text-primary text-sm">two_wheeler</span><span>Xe máy</span>
+</button>
+<button data-vehicle="bicycle"   data-icon="pedal_bike"           data-label="Xe đạp"    class="vehicle-option w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-primary/20 transition-colors text-left">
+<span class="material-symbols-outlined text-primary text-sm">pedal_bike</span><span>Xe đạp</span>
+</button>
+<button data-vehicle="foot"      data-icon="directions_walk"      data-label="Đi bộ"     class="vehicle-option w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-primary/20 transition-colors text-left">
+<span class="material-symbols-outlined text-primary text-sm">directions_walk</span><span>Đi bộ</span>
+</button>
+</div>
+</div>
+<button id="find-route-btn" class="px-5 h-10 bg-primary-container text-on-primary-container rounded-lg font-bold text-sm hover:brightness-110 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" disabled="">
+Tìm đường
+</button>
+</div>
+</div>
+</div>
+<!-- Scrollable content (expanders - added by fix #4) -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-3">
+<!-- Advanced options expander -->
+<div class="border border-outline-variant/10 rounded-xl overflow-hidden">
+<button data-expander="advanced" class="expander-toggle w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">tune</span>
+<span class="text-sm font-medium">Tùy chọn nâng cao</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant expander-chevron transition-transform">expand_more</span>
+</button>
+<div class="expander-body hidden bg-surface-container-lowest border-t border-outline-variant/10 p-4 space-y-4">
+    <!-- Giờ khởi hành -->
+    <div>
+        <label class="text-[10px] uppercase font-bold text-on-surface-variant mb-2 block tracking-wider">Giờ khởi hành (Dự đoán AI)</label>
+        <select id="predict-hour" class="w-full bg-surface-container border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary/50 focus:outline-none transition-colors">
+            <option value="">Bây giờ (LIVE traffic)</option>
+            <option value="6">6:00 Sáng</option>
+            <option value="7">7:00 Sáng (Cao điểm)</option>
+            <option value="8">8:00 Sáng (Cao điểm)</option>
+            <option value="9">9:00 Sáng</option>
+            <option value="12">12:00 Trưa</option>
+            <option value="16">16:00 Chiều</option>
+            <option value="17">17:00 Chiều (Cao điểm)</option>
+            <option value="18">18:00 Chiều (Cao điểm)</option>
+            <option value="19">19:00 Chiều</option>
+            <option value="22">22:00 Tối</option>
+        </select>
+    </div>
+    <!-- Tránh trạm thu phí -->
+    <label class="flex items-center gap-3 cursor-pointer group/chk">
+        <div class="relative flex items-center justify-center">
+            <input type="checkbox" id="avoid-tolls" class="peer appearance-none w-5 h-5 rounded border border-outline-variant/40 bg-surface-container checked:bg-primary checked:border-primary transition-all">
+            <span class="material-symbols-outlined absolute text-on-primary text-[14px] opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">check</span>
+        </div>
+        <span class="text-sm text-on-surface group-hover/chk:text-primary transition-colors">Tránh trạm thu phí</span>
+    </label>
+    <!-- Tránh phà -->
+    <label class="flex items-center gap-3 cursor-pointer group/chk">
+        <div class="relative flex items-center justify-center">
+            <input type="checkbox" id="avoid-ferries" class="peer appearance-none w-5 h-5 rounded border border-outline-variant/40 bg-surface-container checked:bg-primary checked:border-primary transition-all">
+            <span class="material-symbols-outlined absolute text-on-primary text-[14px] opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">check</span>
+        </div>
+        <span class="text-sm text-on-surface group-hover/chk:text-primary transition-colors">Tránh phà</span>
+    </label>
+</div>
+</div>
+<!-- History expander -->
+<div class="border border-outline-variant/10 rounded-xl overflow-hidden">
+<button data-expander="history" class="expander-toggle w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">history</span>
+<span class="text-sm font-medium">Lịch sử tìm kiếm</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant expander-chevron transition-transform">expand_more</span>
+</button>
+<div class="expander-body hidden bg-surface-container-lowest border-t border-outline-variant/10 p-2 max-h-64 overflow-y-auto custom-scrollbar">
+<div id="history-list" class="text-sm text-on-surface-variant">
+<div class="text-center py-3 text-xs">Chưa có lịch sử</div>
+</div>
+</div>
+</div>
+<!-- Favorites expander -->
+<div class="border border-outline-variant/10 rounded-xl overflow-hidden">
+<button data-expander="favorites" class="expander-toggle w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">bookmark</span>
+<span class="text-sm font-medium">Địa điểm đã lưu</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant expander-chevron transition-transform">expand_more</span>
+</button>
+<div class="expander-body hidden bg-surface-container-lowest border-t border-outline-variant/10 p-2 max-h-64 overflow-y-auto custom-scrollbar">
+<div id="favorites-list" class="text-sm text-on-surface-variant">
+<div class="text-center py-3 text-xs">Chưa có địa điểm lưu</div>
+</div>
+</div>
+</div>
+<!-- Turn-by-turn (added by fix #8) -->
+<div class="border border-outline-variant/10 rounded-xl overflow-hidden">
+<button data-expander="directions" class="expander-toggle w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">route</span>
+<span class="text-sm font-medium">Chỉ dẫn rẽ</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant expander-chevron transition-transform">expand_more</span>
+</button>
+<div class="expander-body hidden bg-surface-container-lowest border-t border-outline-variant/10 p-3 max-h-96 overflow-y-auto custom-scrollbar">
+<div id="turn-directions" class="space-y-2 text-sm">
+<div class="text-center py-3 text-xs text-on-surface-variant">Tìm tuyến để xem chỉ dẫn</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<div class="p-4 bg-surface-container-lowest border-t border-outline-variant/10">
+<p class="text-[11px] text-on-surface-variant/70 leading-relaxed">Lộ trình được tính dựa trên dữ liệu Level of Service (LOS) thời gian thực của mạng lưới giao thông TP.HCM.</p>
+</div>
+</aside>
+<!-- SideNavBar (Persistent Anchor) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container/90 backdrop-blur-xl border-r border-outline-variant/10 shadow-lg flex flex-col gap-stack-gap p-panel-padding z-50">
+<div class="flex items-center gap-3 mb-8">
+<div class="font-headline-sm text-headline-sm font-bold text-on-primary-container bg-primary-container rounded-lg p-2">
+                LOS
+            </div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary leading-tight">Chỉ số LOS Giao thông</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">TP.HCM · VN</p>
+</div>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant/10">
+<div class="flex items-center justify-between mb-4 px-2">
+<span class="font-section-label text-section-label uppercase tracking-widest text-on-surface-variant">Trạng thái hệ thống</span>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-green-500/20 text-green-400">TRỰC TUYẾN</span>
+</div>
+<div class="bg-surface-container-high rounded-xl p-3 mb-4">
+<div class="flex justify-between items-center mb-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Độ chính xác</span>
+<span class="font-mono-data text-mono-data text-primary">75.1%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 75.1%"></div>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 text-on-surface-variant font-body-md px-4 py-2 hover:bg-surface-variant/50 transition-colors rounded-lg">
+<span class="material-symbols-outlined">sync</span>
+                Làm mới trực tiếp
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[280px] flex-1 flex flex-col relative h-full">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-page py-4 bg-surface-container-high/90 backdrop-blur-md border-b border-outline-variant/10 z-40">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Chỉ số LOS · TP.HCM</span>
+<div class="h-6 w-[1px] bg-outline-variant/30"></div>
+<nav class="flex gap-6">
+<a class="text-on-surface-variant font-body-md pb-1 hover:text-primary transition-all" href="/overview">Tổng quan</a>
+<a class="text-on-surface-variant font-body-md pb-1 hover:text-primary transition-all" href="/predict">Dự đoán nhanh</a>
+<a class="text-primary border-b-2 border-primary font-bold pb-1" href="/routing">Tìm đường</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1.5 px-3 py-1 bg-error-container text-on-error-container rounded-full text-[12px] font-bold pulse-ring">
+<span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                    LIVE
+                </span>
+<button id="toggle-sidebar-btn" class="p-2 text-on-surface-variant hover:text-primary transition-all" title="Ẩn/hiện panel nhập liệu">
+<span class="material-symbols-outlined">menu_open</span>
+</button>
+</div>
+</header>
+<!-- Map Workspace -->
+<section class="flex-1 relative bg-[#0b1220] overflow-hidden">
+<!-- Leaflet Interactive Map -->
+<div id="leaflet-map" class="absolute inset-0 z-0"></div>
+<!-- Route polyline overlay (managed by RoutingApp) -->
+<svg id="route-svg-overlay" class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="display:none;"></svg>
+<!-- Overlays -->
+<div class="absolute top-margin-page right-margin-page z-20 flex flex-col gap-4">
+<!-- Strategy Legend -->
+<div class="glass-panel rounded-xl p-4 w-64 shadow-2xl">
+<h3 class="font-section-label text-section-label uppercase text-on-surface-variant mb-3 tracking-widest">Chiến lược định tuyến</h3>
+<div class="flex items-center gap-3 mb-2 bg-primary/10 p-2 rounded-lg border border-primary/20">
+<span class="material-symbols-outlined text-primary text-[20px]">verified</span>
+<span class="font-body-md text-body-md text-primary font-bold">Nhanh nhất (Tối ưu)</span>
+</div>
+<div class="flex items-center gap-3 p-2 opacity-60">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">forest</span>
+<span class="font-body-md text-body-md">Đường xanh nhất</span>
+</div>
+<div class="flex items-center gap-3 p-2 opacity-60">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">monetization_on</span>
+<span class="font-body-md text-body-md">Tránh thu phí</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-margin-page left-margin-page z-20">
+<!-- LOS Legend Vertical -->
+<div class="flex flex-col gap-2 p-4 bg-surface-container-highest/90 backdrop-blur-xl border border-outline-variant/20 rounded-xl shadow-2xl w-48">
+    <h3 class="font-section-label text-[10px] uppercase text-on-surface-variant tracking-widest mb-1">Chú thích LOS</h3>
+    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-a shadow-[0_0_8px_rgba(37,99,235,0.8)]"></span><span class="text-xs text-on-surface font-medium">A — Tự do</span></div>
+    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-b shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span><span class="text-xs text-on-surface font-medium">B — Bình thường</span></div>
+    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-c shadow-[0_0_8px_rgba(96,165,250,0.8)]"></span><span class="text-xs text-on-surface font-medium">C — Ổn định</span></div>
+    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-d shadow-[0_0_8px_rgba(249,115,22,0.8)]"></span><span class="text-xs text-on-surface font-medium">D — Gần bão hòa</span></div>
+    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-e shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span><span class="text-xs text-on-surface font-medium">E — Kẹt xe</span></div>
+    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-f shadow-[0_0_8px_rgba(185,28,28,0.8)]"></span><span class="text-xs text-on-surface font-medium">F — Tắc nghẽn</span></div>
+</div>
+</div>
+<!-- Results Drawer -->
+<div id="results-drawer" class="absolute top-margin-page left-margin-page w-[380px] max-h-[calc(100%-48px)] flex flex-col z-30 pointer-events-auto">
+<div class="glass-panel rounded-2xl shadow-hero overflow-hidden flex flex-col h-full">
+<!-- Drawer Header -->
+<div class="p-5 border-b border-outline-variant/10 bg-primary-container/5">
+<div class="flex items-center gap-2 mb-4">
+<span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(180,197,255,0.8)]"></span>
+<span id="drawer-strategy" class="font-headline-sm text-headline-sm font-bold text-primary">Ít kẹt nhất</span>
+</div>
+<div class="grid grid-cols-3 gap-2 mb-4">
+<div class="text-center p-2 bg-surface-container/50 rounded-xl border border-white/5">
+<p class="text-[10px] uppercase text-on-surface-variant font-bold">Khoảng cách</p>
+<p id="drawer-distance" class="font-mono-data text-primary text-lg">12.4 km</p>
+</div>
+<div class="text-center p-2 bg-surface-container/50 rounded-xl border border-white/5">
+<p class="text-[10px] uppercase text-on-surface-variant font-bold">Thời gian</p>
+<p id="drawer-time" class="font-mono-data text-primary text-lg">23 phút</p>
+</div>
+<div class="text-center p-2 bg-surface-container/50 rounded-xl border border-white/5">
+<p class="text-[10px] uppercase text-on-surface-variant font-bold">Độ tin cậy</p>
+<p id="drawer-confidence" class="font-mono-data text-primary text-lg">87%</p>
+</div>
+</div>
+<!-- LOS Distribution Strip -->
+<div id="los-strip" class="flex h-3 w-full rounded-full overflow-hidden mb-4 border border-white/5">
+<div class="los-a" style="width: 50%"></div>
+<div class="los-b" style="width: 25%"></div>
+<div class="los-c" style="width: 15%"></div>
+<div class="los-d" style="width: 7%"></div>
+<div class="los-e" style="width: 3%"></div>
+</div>
+<div id="los-badges" class="flex flex-wrap gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-green-500/30 text-green-400 bg-green-500/10">A x 24</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-purple-500/30 text-purple-400 bg-purple-500/10">B x 12</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-yellow-500/30 text-yellow-400 bg-yellow-500/10">C x 8</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-orange-500/30 text-orange-400 bg-orange-500/10">D x 3</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-red-500/30 text-red-400 bg-red-500/10">E x 1</span>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-5 custom-scrollbar">
+<!-- Route Comparison -->
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase tracking-widest mb-3">So sánh</h4>
+<div id="route-cards" class="space-y-3 mb-6">
+<!-- Active Card -->
+<div class="p-4 rounded-xl bg-primary-container/20 border border-primary/40 ring-1 ring-primary/20 shadow-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="font-body-md font-bold text-primary">Tuyến 1: CT Long Thành</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex gap-4 font-mono-data text-xs text-on-primary-container opacity-80">
+<span>23 phút</span>
+<span>•</span>
+<span>Tiết kiệm 5 phút</span>
+</div>
+</div>
+<!-- Alternative -->
+<div class="p-4 rounded-xl bg-surface-container border border-outline-variant/10 hover:bg-surface-variant/30 transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<span class="font-body-md font-bold text-on-surface">Tuyến 2: Xa Lộ Hà Nội</span>
+</div>
+<div class="flex gap-4 font-mono-data text-xs text-on-surface-variant">
+<span>28 phút</span>
+<span>•</span>
+<span>Kẹt xe nhiều hơn</span>
+</div>
+</div>
+</div>
+<!-- Turn by Turn -->
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase tracking-widest mb-3">Chi tiết lộ trình</h4>
+<div class="space-y-4">
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">turn_slight_right</span>
+</div>
+<div class="w-[1px] flex-1 bg-outline-variant/20 my-1"></div>
+</div>
+<div class="flex-1 pb-4">
+<div class="flex justify-between mb-1">
+<p class="font-body-md font-bold text-on-surface">Rẽ phải vào Võ Văn Kiệt</p>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded los-a text-white">LOS A</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tiếp tục 2.4 km • 4 phút</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">straight</span>
+</div>
+<div class="w-[1px] flex-1 bg-outline-variant/20 my-1"></div>
+</div>
+<div class="flex-1 pb-4">
+<div class="flex justify-between mb-1">
+<p class="font-body-md font-bold text-on-surface">Đi thẳng qua hầm Thủ Thiêm</p>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded los-b text-white">LOS B</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tiếp tục 1.8 km • 3 phút</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">u_turn_left</span>
+</div>
+<div class="w-[1px] flex-1 bg-outline-variant/20 my-1"></div>
+</div>
+<div class="flex-1 pb-4">
+<div class="flex justify-between mb-1">
+<p class="font-body-md font-bold text-on-surface">Quay đầu tại nút giao An Phú</p>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded los-c text-white">LOS C</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Chậm trễ 2 phút</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">navigation</span>
+</div>
+<div class="w-[1px] flex-1 bg-outline-variant/20 my-1"></div>
+</div>
+<div class="flex-1 pb-4">
+<div class="flex justify-between mb-1">
+<p class="font-body-md font-bold text-on-surface">Vào Cao Tốc Long Thành</p>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded los-d text-white">LOS D</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Mật độ cao • 6.2 km</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between mb-1">
+<p class="font-body-md font-bold text-on-surface">Đến điểm kết thúc</p>
+<span class="text-[10px] font-bold px-1.5 py-0.5 rounded los-a text-white">LOS A</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">HCMC Industrial Park</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Action -->
+<div class="p-5 border-t border-outline-variant/10 space-y-2">
+<div class="grid grid-cols-2 gap-2">
+<button id="save-fav-btn" class="h-11 bg-surface-container-high border border-outline-variant/20 text-on-surface rounded-xl flex items-center justify-center gap-2 text-sm font-medium hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm">bookmark_add</span>
+                        Lưu điểm đến
+                    </button>
+<button id="export-gpx-btn" class="h-11 bg-surface-container-high border border-outline-variant/20 text-on-surface rounded-xl flex items-center justify-center gap-2 text-sm font-medium hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm">download</span>
+                        Xuất GPX
+                    </button>
+</div>
+<button id="start-nav-btn" class="w-full h-14 bg-primary-container text-white font-bold rounded-xl flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(37,99,235,0.4)] active:scale-95 transition-transform">
+<span class="material-symbols-outlined">navigation</span>
+                        Bắt đầu chỉ dẫn
+                    </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="flex justify-between items-center px-margin-page py-unit w-full bg-surface-container-lowest border-t border-outline-variant/10 z-40">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Nghiên cứu ITS · Bảng điều khiển giao thông thông minh TP.HCM</span>
+<div class="flex gap-4 items-center">
+<span class="font-mono-data text-mono-data text-on-surface-variant">v2026.07 · chính thức</span>
+<span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+</div>
+</footer>
+</main>
+<script src="api.js"></script>
+<script src="routing_app.js"></script>
+<script>
+        // Load route data from sessionStorage and populate UI
+        document.addEventListener("DOMContentLoaded", function() {
+            try {
+                const raw = sessionStorage.getItem("its_route_result");
+                if (!raw) {
+                    // No data, redirect back to empty state
+                    window.location.href = "/routing";
+                    return;
+                }
+                const data = JSON.parse(raw);
+
+                // Populate input fields
+                const startInp = document.getElementById("input-start");
+                const endInp = document.getElementById("input-end");
+                if (startInp && data.start) {
+                    startInp.value = data.start.label;
+                    startInp.style.color = "#b4c5ff";
+                }
+                if (endInp && data.end) {
+                    endInp.value = data.end.label;
+                    endInp.style.color = "#b4c5ff";
+                }
+
+                // Populate vehicle selector
+                if (data.vehicle) {
+                    const vehicleLabel = document.getElementById("vehicle-label");
+                    const vehicleIcon = document.getElementById("vehicle-icon");
+                    const vehicleMap = {
+                        car: { label: "Ô tô", icon: "directions_car" },
+                        motorbike: { label: "Xe máy", icon: "two_wheeler" },
+                        bicycle: { label: "Xe đạp", icon: "pedal_bike" },
+                        foot: { label: "Đi bộ", icon: "directions_walk" }
+                    };
+                    if (vehicleMap[data.vehicle] && vehicleLabel && vehicleIcon) {
+                        vehicleLabel.textContent = vehicleMap[data.vehicle].label;
+                        vehicleIcon.textContent = vehicleMap[data.vehicle].icon;
+                    }
+                }
+
+                // Populate results drawer
+                if (data.routes && data.routes.length) {
+                    const visible = data.routes.filter(r => r.strategy !== "Ngắn nhất");
+                    const selIdx = Math.min(data.selectedIdx || 0, visible.length - 1);
+                    const sel = visible[selIdx] || data.routes[0];
+
+                    // Strategy name
+                    const strategyEl = document.getElementById("drawer-strategy");
+                    if (strategyEl) strategyEl.textContent = sel.strategy;
+
+                    // Distance
+                    const distEl = document.getElementById("drawer-distance");
+                    if (distEl) distEl.textContent = sel.total_distance_display || formatDist(sel.total_distance_m);
+
+                    // Time
+                    const timeEl = document.getElementById("drawer-time");
+                    if (timeEl) timeEl.textContent = sel.total_travel_time_str || formatTime(sel.total_travel_time_s);
+
+                    // Confidence
+                    const confEl = document.getElementById("drawer-confidence");
+                    if (confEl) {
+                        confEl.textContent = ((sel.avg_confidence || 0.5) * 100).toFixed(0) + "%";
+                    }
+
+                    // LOS distribution strip
+                    const losStrip = document.getElementById("los-strip");
+                    if (losStrip && sel.los_distribution) {
+                        const losColors = { A: "#22c55e", B: "#a855f7", C: "#eab308", D: "#f97316", E: "#ef4444", F: "#b91c1c" };
+                        const total = Object.values(sel.los_distribution).reduce((a, b) => a + b, 0) || 1;
+                        losStrip.innerHTML = "";
+                        "ABCDEF".split("").forEach(L => {
+                            const c = sel.los_distribution[L] || 0;
+                            if (!c) return;
+                            const seg = document.createElement("div");
+                            seg.style.cssText = `flex:${c};background:${losColors[L]};`;
+                            losStrip.appendChild(seg);
+                        });
+                    }
+
+                    // LOS badges
+                    const losBadges = document.getElementById("los-badges");
+                    if (losBadges && sel.los_distribution) {
+                        const losColors = { A: "#22c55e", B: "#a855f7", C: "#eab308", D: "#f97316", E: "#ef4444", F: "#b91c1c" };
+                        losBadges.innerHTML = "";
+                        "ABCDEF".split("").forEach(L => {
+                            const c = sel.los_distribution[L] || 0;
+                            if (!c) return;
+                            const badge = document.createElement("span");
+                            badge.style.cssText = `padding:2px 8px;border-radius:6px;background:${losColors[L]};color:#fff;font-size:10px;font-weight:700;`;
+                            badge.textContent = `${L} × ${c}`;
+                            losBadges.appendChild(badge);
+                        });
+                    }
+                }
+            } catch(ex) {
+                console.error("Failed to load route data:", ex);
+            }
+
+            function formatDist(m) {
+                if (m >= 1000) return (m / 1000).toFixed(1) + " km";
+                return Math.round(m) + " m";
+            }
+            function formatTime(s) {
+                s = Math.round(s);
+                if (s < 60) return s + "s";
+                if (s < 3600) return Math.floor(s / 60) + "m";
+                return Math.floor(s / 3600) + "h " + Math.floor((s % 3600) / 60) + "m";
+            }
+        });
+
+        // Simple Micro-interaction for comparison cards
+        document.querySelectorAll('.cursor-pointer').forEach(card => {
+            card.addEventListener('click', function() {
+                // Toggle active state visualization
+            });
+        });
+
+        // Atmospheric effect: Moving particles on route
+        const style = document.createElement('style');
+        style.textContent = `
+            .route-particle {
+                offset-path: path("M400 600 L 450 580 L 520 540 L 600 500 L 680 480 L 750 450 L 820 420 L 900 380 L 1000 300 L 1100 200");
+                animation: travel 4s infinite linear;
+            }
+            @keyframes travel {
+                from { offset-distance: 0%; }
+                to { offset-distance: 100%; }
+            }
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 4px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.02);
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Start navigation button
+        const navBtn = document.getElementById('start-nav-btn');
+        if (navBtn) {
+            navBtn.addEventListener('click', () => {
+                window.location.href = '/navigation';
+            });
+        }
+    </script>
+</body></html>

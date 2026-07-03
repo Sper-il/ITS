@@ -1,0 +1,26 @@
+{
+  "data": {
+    "columns": [
+      "length",
+      "max_velocity",
+      "vc_ratio",
+      "LOS",
+      "LOS_pred",
+      "confidence",
+      "P_A",
+      "P_B",
+      "P_C",
+      "P_D",
+      "P_E",
+      "P_F"
+    ],
+    "confidence_max": 0.1667,
+    "confidence_mean": 0.16670000000000001,
+    "confidence_min": 0.1667,
+    "los_pred_value_counts": {
+      "A": 50
+    },
+    "n_rows": 50
+  },
+  "sha256": "b2924c3a348a53fd0dfe3b45f08efa8d5fb8678781f75f1dd6b91f97290bcee7"
+}

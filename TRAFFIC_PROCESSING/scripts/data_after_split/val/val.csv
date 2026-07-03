@@ -1,0 +1,2 @@
+segment_id,date,period,lat,lon,long,long_snode,lat_snode,long_enode,lat_enode,velocity,max_velocity,street_level,lanes,length,s_node_id,e_node_id,street_id,hist_vel_mean,LOS
+1,2024-01-03,2,10.75,106.65,106.65,106.65,10.75,106.66,10.76,50.0,50,2,2,120.0,1,2,1,43.0,2
