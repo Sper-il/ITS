@@ -20,6 +20,20 @@ const RoutingApp = (() => {
     selectedIdx: 0,   // index in the visible (non-shortest) route array
   };
 
+  // ── Distance / time formatters (defensive fallback if backend omits display fields) ──
+  function formatDist(m) {
+    if (m == null || isNaN(m)) return "—";
+    if (m >= 1000) return (m / 1000).toFixed(1) + " km";
+    return Math.round(m) + " m";
+  }
+  function formatTime(s) {
+    if (s == null || isNaN(s) || s <= 0) return "—";
+    s = Math.round(s);
+    if (s < 60)    return s + "s";
+    if (s < 3600)  return Math.floor(s / 60) + "m";
+    return Math.floor(s / 3600) + "h " + Math.floor((s % 3600) / 60) + "m";
+  }
+
   // ── Floating chip sync (empty state) ──
   function syncFloatingChips() {
     const fs = $("#floating-start");
@@ -205,23 +219,12 @@ const RoutingApp = (() => {
       return;
     }
     try {
-      // Read advanced options
-      const predictHourEl = document.getElementById("predict-hour");
-      const avoidTollsEl = document.getElementById("avoid-tolls");
-      const avoidFerriesEl = document.getElementById("avoid-ferries");
-      const predictHour = predictHourEl && predictHourEl.value ? parseInt(predictHourEl.value, 10) : null;
-      const avoidTolls = avoidTollsEl ? avoidTollsEl.checked : false;
-      const avoidFerries = avoidFerriesEl ? avoidFerriesEl.checked : false;
-
       // If user added waypoints, use the multi-leg endpoint (fix #6).
       if (state.waypoints.length && state.waypoints.every(w => w.lat != null)) {
         const wps = [state.start, ...state.waypoints, state.end];
         const out = await API.post("/api/route/multi-leg", {
           waypoints: wps.map(w => ({ lat: w.lat, lon: w.lon, label: w.label })),
           vehicle: state.vehicle,
-          predict_hour: predictHour,
-          avoid_tolls: avoidTolls,
-          avoid_ferries: avoidFerries,
         });
         if (out.error) {
           alert(out.error);
@@ -288,9 +291,6 @@ const RoutingApp = (() => {
         end_lat: state.end.lat,
         end_lon: state.end.lon,
         vehicle: state.vehicle,
-        predict_hour: predictHour,
-        avoid_tolls: avoidTolls,
-        avoid_ferries: avoidFerries,
       });
       if (!out.routes || !out.routes.length) {
         const empty = $("#results-empty");
@@ -458,11 +458,20 @@ const RoutingApp = (() => {
     const distEl = $("#drawer-distance");
     const timeEl = $("#drawer-time");
     const confEl = $("#drawer-confidence");
-    if (distEl) distEl.textContent = sel.total_distance_display;
-    if (timeEl) timeEl.textContent = sel.total_travel_time_str;
+    if (distEl) {
+      distEl.textContent = sel.total_distance_display || formatDist(sel.total_distance_m);
+      distEl.style.color = "#b4c5ff";
+    }
+    if (timeEl) {
+      timeEl.textContent = sel.total_travel_time_str || formatTime(sel.total_travel_time_s);
+      timeEl.style.color = "#b4c5ff";
+    }
     if (confEl) {
-      confEl.textContent = (sel.avg_confidence * 100).toFixed(0) + "%";
-      confEl.style.color = "#2563eb";
+      const conf = (sel.avg_confidence != null && !isNaN(sel.avg_confidence))
+        ? (sel.avg_confidence * 100).toFixed(0) + "%"
+        : "—";
+      confEl.textContent = conf;
+      confEl.style.color = "#b4c5ff";
     }
 
     // Route strategy chips (3 total, hide Ngắn nhất)
@@ -547,11 +556,11 @@ const RoutingApp = (() => {
           </div>
           <div style="display:flex;gap:12px;">
             <div>
-              <div style="font-size:18px;font-weight:700;">${r.total_distance_display}</div>
+              <div style="font-size:18px;font-weight:700;">${r.total_distance_display || formatDist(r.total_distance_m)}</div>
               <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);">Khoảng cách</div>
             </div>
             <div>
-              <div style="font-size:18px;font-weight:700;">${r.total_travel_time_str}</div>
+              <div style="font-size:18px;font-weight:700;">${r.total_travel_time_str || formatTime(r.total_travel_time_s)}</div>
               <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);">Thời gian</div>
             </div>
           </div>
@@ -565,11 +574,14 @@ const RoutingApp = (() => {
     const totalTime = $("#sum-time");
     const totalConf = $("#sum-confidence");
     const totalEdge = $("#sum-edges");
-    if (totalDist) totalDist.textContent = sel.total_distance_display;
-    if (totalTime) totalTime.textContent = sel.total_travel_time_str;
+    if (totalDist) totalDist.textContent = sel.total_distance_display || formatDist(sel.total_distance_m);
+    if (totalTime) totalTime.textContent = sel.total_travel_time_str || formatTime(sel.total_travel_time_s);
     if (totalConf) {
-      totalConf.textContent = (sel.avg_confidence * 100).toFixed(0) + "%";
-      totalConf.style.color = "#2563eb";
+      const conf = (sel.avg_confidence != null && !isNaN(sel.avg_confidence))
+        ? (sel.avg_confidence * 100).toFixed(0) + "%"
+        : "—";
+      totalConf.textContent = conf;
+      totalConf.style.color = "#b4c5ff";
     }
     if (totalEdge) totalEdge.textContent = String(sel.edges?.length || 0);
 
@@ -1088,7 +1100,7 @@ ${pts}
     } catch (ex) { /* ignore */ }
   }
 
-  return { init, state, showAutocomplete, syncFloatingChips, renderChips };
+  return { init, state, showAutocomplete, syncFloatingChips, renderChips, renderDrawer, renderMap, formatDist, formatTime };
 })();
 
 // Expose RoutingApp globally for Leaflet map integration
@@ -1206,7 +1218,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (sel.edges && sel.edges.length) {
       sel.edges.forEach(e => {
         if (e.lat1 == null) return;
-        const line = L.polyline([[e.lat1, e.lon1], [e.lat2, e.lon2]], {
+        const pts = (e.geometry && e.geometry.length > 0) ? e.geometry : [[e.lat1, e.lon1], [e.lat2, e.lon2]];
+        const line = L.polyline(pts, {
           color: (typeof LOS_COLORS !== 'undefined' && LOS_COLORS[e.los]) || e.los_color || "#888", weight: 5, opacity: 0.9,
           lineCap: "round", lineJoin: "round",
         })

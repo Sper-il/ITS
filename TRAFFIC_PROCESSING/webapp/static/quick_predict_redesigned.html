@@ -194,17 +194,17 @@
 <span class="material-symbols-outlined block">traffic</span>
 </div>
 <div>
-<h1 class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">Chỉ số LOS Giao thông</h1>
+<h1 class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">ITS Traffic LOS</h1>
 <p class="font-body-sm text-body-sm text-on-surface-variant">TP.HCM · VN</p>
 </div>
 </div>
 <div class="mt-auto space-y-4">
 <div class="bg-primary-container/10 border border-primary/20 rounded-xl p-4">
 <div class="flex justify-between items-center mb-1">
-<span class="text-section-label font-section-label text-primary uppercase">Trạng thái Engine</span>
+<span class="text-section-label font-section-label text-primary uppercase">Trạng thái động cơ</span>
 <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
 </div>
-<div class="font-headline-sm text-headline-sm font-bold text-primary">Độ chính xác 75.1%</div>
+<div class="font-headline-sm font-bold text-primary">Độ chính xác 75,1%</div>
 </div>
 <button class="w-full flex items-center justify-center gap-2 text-on-surface-variant font-body-md px-4 py-2 hover:bg-surface-variant/50 transition-colors rounded-lg">
 <span class="material-symbols-outlined text-[18px]">sync</span>
@@ -227,7 +227,13 @@
 <div class="flex items-center gap-4">
 <div class="flex items-center gap-2 px-3 py-1 bg-error-container/20 rounded-full border border-error/30">
 <span class="w-2 h-2 bg-error rounded-full animate-pulse"></span>
-<span class="text-error font-mono-data text-mono-data font-bold">TRỰC TIẾP</span>
+<span class="text-error font-mono-data text-mono-data font-bold">LIVE</span>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-all opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30 ml-2">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsfZABl8BJqK_7gBaDVz__5alvv1WKgsHW1LOLCnWrUBHiBJGIihbrv58w4WliW4I-0dmSloNzvDRAUNLElxwB1t18vhvfRMy0hhOXWuRFCgv_vwxO_M-7UjpJoJJT6dAmi2Qh-fp9X4NuVNie_-7XKXRcZbwtyln1n11k78SwwWyduHgjznuhzni1nEzV62bbgQlcVr-9Qtmm_GXNdWH1nGkQLxBwOkK4VrQULZ_W8n9neq0o8qLbTTglOXFbeKdc18s8nBLZJWQ"/>
 </div>
 </div>
 </header>
@@ -236,22 +242,22 @@
 <aside class="w-[380px] h-full glass-panel border-r border-outline-variant/10 p-6 flex flex-col gap-8 overflow-y-auto">
 <div>
 <h2 class="text-section-label font-section-label text-outline uppercase tracking-widest mb-6 flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">tune</span> Thông số
+<span class="material-symbols-outlined text-sm">tune</span> Parameters
                 </h2>
 <!-- Infrastructure Group -->
 <div class="space-y-6 mb-10">
 <div class="flex items-center gap-2 mb-4">
 <span class="w-1 h-3 bg-primary rounded-full"></span>
-<span class="text-body-sm font-bold text-on-surface tracking-wide">TRẠNG THÁI MẠNG LƯỚI</span>
+<span class="text-body-sm font-bold text-on-surface tracking-wide">INFRASTRUCTURE</span>
 </div>
-<div class="space-y-3 hidden">
+<div class="space-y-3">
 <div class="flex justify-between items-center">
-<label class="text-body-sm text-on-surface-variant">Chiều dài đoạn đường</label>
+<label class="text-body-sm text-on-surface-variant">Chiều dài đoạn</label>
 <span id="val-length" class="font-mono-data text-primary">1,240<small class="ml-1 opacity-60">m</small></span>
 </div>
 <input id="slider-length" class="w-full h-1 bg-surface-variant rounded-lg appearance-none cursor-pointer slider-thumb" max="5000" min="50" type="range" value="1240"/>
 </div>
-<div class="space-y-3 hidden">
+<div class="space-y-3">
 <div class="flex justify-between items-center">
 <label class="text-body-sm text-on-surface-variant">Giới hạn tốc độ</label>
 <span id="val-speed" class="font-mono-data text-primary">60<small class="ml-1 opacity-60">km/h</small></span>
@@ -260,7 +266,7 @@
 </div>
 <div class="space-y-3">
 <div class="flex justify-between items-center">
-<label class="text-body-sm text-on-surface-variant">Tỷ lệ V/C trung bình TP</label>
+<label class="text-body-sm text-on-surface-variant">V/C Ratio</label>
 <span id="val-vc" class="font-mono-data text-error">0.85</span>
 </div>
 <input id="slider-vc" class="w-full h-1 bg-surface-variant rounded-lg appearance-none cursor-pointer slider-thumb" max="150" min="0" type="range" value="85"/>
@@ -281,7 +287,7 @@
 </div>
 <div class="space-y-4 pt-2">
 <label class="flex items-center justify-between cursor-pointer group">
-<span class="text-body-md text-on-surface-variant group-hover:text-on-surface">Dự báo cuối tuần</span>
+<span class="text-body-md text-on-surface-variant group-hover:text-on-surface">Dự đoán cuối tuần</span>
 <div class="relative w-9 h-5 bg-surface-variant rounded-full transition-colors group-hover:bg-outline-variant">
 <input class="sr-only peer" type="checkbox"/>
 <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
@@ -299,7 +305,7 @@
 </div>
 <button id="predict-btn" class="mt-auto w-full bg-primary text-on-primary font-bold py-4 rounded-xl hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-primary/10">
 <span class="material-symbols-outlined">analytics</span>
-                DỰ ĐOÁN CHỈ SỐ LOS
+                DỰ ĐOÁN LOS GIAO THÔNG
             </button>
 </aside>
 <!-- Main Workspace -->
@@ -309,11 +315,11 @@
 <div class="flex items-center justify-between">
 <div class="flex items-center gap-3">
 <span class="w-1 h-6 bg-primary rounded-full"></span>
-<h2 class="text-section-label font-section-label text-outline uppercase tracking-widest">KẾT QUẢ SUY LUẬN TRỰC TIẾP</h2>
+<h2 class="text-section-label font-section-label text-outline uppercase tracking-widest">REAL-TIME INFERENCE RESULTS</h2>
 </div>
 <div class="flex items-center gap-4 text-body-sm font-mono-data text-outline">
 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> ENGINE: RF_V3</span>
-<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> ĐỘ TRỄ: 24ms</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> LATENCY: 24ms</span>
 </div>
 </div>
 <div class="grid grid-cols-12 gap-gutter">
@@ -324,18 +330,18 @@
 <div class="relative z-10">
 <div class="flex justify-between items-start mb-4">
 <h3 class="text-section-label font-section-label text-outline uppercase">Dự đoán hiện tại</h3>
-<div class="bg-error/20 px-3 py-1 rounded-full border border-error/30 text-error font-bold text-xs">ÙN TẮC NGHIÊM TRỌNG</div>
+<div class="bg-error/20 px-3 py-1 rounded-full border border-error/30 text-error font-bold text-xs">TẮC NGHẼN NGHIÊM TRỌNG</div>
 </div>
 <div class="flex items-end gap-6">
 <div class="font-mono-data text-[10rem] leading-[0.8] font-bold los-glow-e tracking-tighter">E</div>
 <div class="pb-4">
 <div class="text-display-lg font-bold text-error mb-2">Kẹt xe</div>
-<p class="text-body-md text-on-surface-variant max-w-xs">Dự báo ùn tắc với xác suất cao trên toàn mạng lưới thành phố theo các thông số thời gian thực.</p>
+<p class="text-body-md text-on-surface-variant max-w-xs">Dự đoán tình trạng ùn tắc với xác suất cao cho các tham số đoạn đường đã chọn.</p>
 </div>
 </div>
 <div class="mt-10 grid grid-cols-2 gap-6">
 <div class="bg-surface-container/50 rounded-xl p-4 border border-outline-variant/10">
-<div class="text-body-sm text-outline mb-1">Độ tin cậy của mô hình</div>
+<div class="text-body-sm text-outline mb-1">Độ tin cậy mô hình</div>
 <div class="flex items-center gap-3">
 <span class="text-headline-sm font-mono-data font-bold text-primary">82.4%</span>
 <div class="h-1.5 flex-1 bg-surface-variant rounded-full overflow-hidden">
@@ -344,8 +350,8 @@
 </div>
 </div>
 <div class="bg-surface-container/50 rounded-xl p-4 border border-outline-variant/10">
-<div class="text-body-sm text-outline mb-1">Trạng thái dòng xe</div>
-<div class="text-headline-sm font-bold text-on-surface">Không ổn định <span class="text-error ml-1 text-sm">↓</span></div>
+<div class="text-body-sm text-outline mb-1">Chế độ dòng xe</div>
+<div class="text-headline-sm font-bold text-on-surface">Bất ổn <span class="text-error ml-1 text-sm">↓</span></div>
 </div>
 </div>
 </div>
@@ -356,9 +362,9 @@
 <span class="material-symbols-outlined text-error">warning_amber</span>
 </div>
 <div>
-<h4 class="font-bold text-error mb-1">Khuyến nghị điều hành</h4>
+<h4 class="font-bold text-error mb-1">Khuyến nghị vận hành</h4>
 <p class="text-body-md text-error/80 leading-relaxed">
-                                    Phát hiện kẹt xe nghiêm trọng trên diện rộng. Khuyến nghị triển khai các quy trình quản lý giao thông cấp thành phố hoặc thông báo trên các bảng điện tử VMS để người dân lựa chọn lộ trình phù hợp.
+                                    Phát hiện ùn tắc nghiêm trọng. Khuyến nghị triển khai các phương án điều tiết giao thông tạm thời hoặc đề xuất đường đi thay thế qua <span class="font-bold underline cursor-pointer">Lê Văn Sỹ</span> để giảm tải cho đoạn đường.
                                 </p>
 </div>
 </div>
@@ -416,7 +422,7 @@
 </div>
 <button class="w-full border border-outline-variant/30 hover:bg-surface-variant/30 text-body-sm text-on-surface-variant font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-2">
 <span class="material-symbols-outlined text-[16px]">file_download</span>
-                                Xuất phân phối mô hình
+                                Export Model Distribution
                             </button>
 </div>
 </div>
@@ -426,9 +432,9 @@
 <summary class="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-variant/20 transition-colors list-none">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-outline transition-transform group-open:rotate-90">chevron_right</span>
-<span class="text-body-sm font-bold text-outline uppercase tracking-wider">Nhật ký hệ thống gốc &amp; Phản hồi JSON</span>
+<span class="text-body-sm font-bold text-outline uppercase tracking-wider">Nhật ký hệ thống &amp; phản hồi JSON</span>
 </div>
-<span class="text-[10px] font-mono-data bg-surface-container-highest px-2 py-0.5 rounded text-primary">SCALAR-HCMC-V2026.07</span>
+<span class="text-[10px] font-mono-data bg-surface-container-highest px-2 py-0.5 rounded text-primary">MÔ HÌNH-TP.HCM-V2026.07</span>
 </summary>
 <div class="p-6 bg-surface-container-lowest/50 border-t border-outline-variant/10">
 <pre class="font-mono-data text-body-sm text-primary/70 overflow-x-auto leading-relaxed">{
@@ -450,10 +456,10 @@
 <!-- Footer -->
 <footer class="mt-8 bg-surface-container-lowest border-t border-outline-variant/10 flex justify-between items-center px-margin-page py-3 w-full opacity-60">
 <div class="flex items-center gap-4">
-<span class="font-body-sm text-body-sm text-on-surface-variant">Nghiên cứu ITS · Bảng điều khiển giao thông thông minh TP.HCM</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ITS Research · Bảng điều khiển tình báo giao thông TP.HCM</span>
 </div>
 <div class="flex items-center gap-6">
-<span class="font-mono-data text-mono-data text-on-surface-variant">v2026.07 · chính thức</span>
+<span class="font-mono-data text-mono-data text-on-surface-variant">v2026.07 · bản chính thức</span>
 <div class="flex gap-4">
 <a class="font-body-sm text-on-surface-variant hover:text-primary" href="#">Tài liệu</a>
 <a class="font-body-sm text-on-surface-variant hover:text-primary" href="#">Hỗ trợ</a>

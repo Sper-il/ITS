@@ -69,8 +69,8 @@ GPS_DEFAULT_ACCURACY_M = 30.0
 # Vehicle profiles
 VEHICLE_PROFILES = {
     "car":       {"name": "Car",       "max_velocity_kmh": 50, "highway_filter": None,        "los_weight_multiplier": 1.0},
-    "motorbike": {"name": "Motorbike", "max_velocity_kmh": 50, "highway_filter": None,        "los_weight_multiplier": 0.3},
-    "bicycle":   {"name": "Bicycle",   "max_velocity_kmh": 15, "highway_filter": "no_motorway","los_weight_multiplier": 1.0},
+    "motorbike": {"name": "Motorbike", "max_velocity_kmh": 40, "highway_filter": None,        "los_weight_multiplier": 0.9},
+    "bicycle":   {"name": "Bicycle",   "max_velocity_kmh": 18, "highway_filter": "no_motorway","los_weight_multiplier": 1.2},
     "foot":      {"name": "On foot",   "max_velocity_kmh":  5, "highway_filter": "foot_only", "los_weight_multiplier": 1.0},
 }
 

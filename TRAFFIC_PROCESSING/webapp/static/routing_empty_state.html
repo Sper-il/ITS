@@ -226,7 +226,7 @@
 <span class="font-section-label text-section-label uppercase tracking-widest text-primary">Trạng thái mô hình</span>
 <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
 </div>
-<div class="text-headline-sm font-bold text-primary">Độ chính xác 75.1%</div>
+<div class="text-headline-sm font-bold text-primary">Độ chính xác 75,1%</div>
 <div class="w-full bg-outline-variant/20 h-1 rounded-full mt-2 overflow-hidden">
 <div class="bg-primary h-full w-[75%]"></div>
 </div>
@@ -257,6 +257,15 @@
 </span>
 <span class="font-mono-data text-mono-data">LIVE</span>
 </div>
+<button class="text-on-surface-variant hover:text-primary transition-all p-2 rounded-full hover:bg-surface-variant/30">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all p-2 rounded-full hover:bg-surface-variant/30">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary/20 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional close-up profile portrait of a data scientist in a modern dark-lit office setting. The person is looking thoughtfully at a holographic interface showing urban data maps. The lighting is low-key with cool blue and neon cyan highlights reflecting on their glasses, reinforcing the high-tech, analytical theme of the HCM traffic intelligence dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0MwC3qRwZ0-bdi3j9TqPHe35VCXx1c6_05KafprjjlyesG0L9QpESKS8ukBzBT2viRkmER9JkRbYbJYh98yW1dBSBvADrHt_VXt6_5hhktbei2JO8XqP_Ld9N2Ls_pmgWpC8t1_lxWfbMxYWBfJx3uVLtGevty-_Pp7XNCTn-8NTh-LFpxEOfmwgsPSn4rxo9hTTWdBKqIAuxJrLaP_6rHAOE-2m8Hv2Fgp_hEyJheH4L0Zs65PEBpDS8vyvUXjbbPVMh_mBr1uY"/>
+</div>
 </div>
 </header>
 <!-- Dynamic Success Banner -->
@@ -265,7 +274,7 @@
 <span class="material-symbols-outlined text-green-500 text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
 <span class="font-body-sm text-body-sm text-on-surface">Đồ thị: <span class="font-bold">8,234</span> nút, <span class="font-bold">19,872</span> cạnh</span>
 </div>
-<div class="text-on-surface-variant text-[11px] font-mono-data uppercase tracking-widest">v2026.07.A2 Đã kết nối hệ thống</div>
+<div class="text-on-surface-variant text-[11px] font-mono-data uppercase tracking-widest">v2026.07.A2 · Đã kết nối hệ thống</div>
 </div>
 <!-- Layout Content Split -->
 <div class="flex-1 flex overflow-hidden">
@@ -321,14 +330,36 @@
 <span class="material-symbols-outlined text-on-surface">layers</span>
 </button>
 </div>
-<div class="absolute bottom-6 left-6 z-30 flex flex-col gap-2 p-4 bg-surface-container-highest/90 backdrop-blur-xl border border-outline-variant/20 rounded-xl shadow-2xl w-48">
-    <h3 class="font-section-label text-[10px] uppercase text-on-surface-variant tracking-widest mb-1">Chú thích LOS</h3>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-a shadow-[0_0_8px_rgba(37,99,235,0.8)]"></span><span class="text-xs text-on-surface font-medium">A — Tự do</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-b shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span><span class="text-xs text-on-surface font-medium">B — Bình thường</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-c shadow-[0_0_8px_rgba(96,165,250,0.8)]"></span><span class="text-xs text-on-surface font-medium">C — Ổn định</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-d shadow-[0_0_8px_rgba(249,115,22,0.8)]"></span><span class="text-xs text-on-surface font-medium">D — Gần bão hòa</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-e shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span><span class="text-xs text-on-surface font-medium">E — Kẹt xe</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-f shadow-[0_0_8px_rgba(185,28,28,0.8)]"></span><span class="text-xs text-on-surface font-medium">F — Tắc nghẽn</span></div>
+
+<!-- LOS Legend (Bottom Left) -->
+<div class="absolute bottom-6 left-6 z-20">
+<div class="rounded-xl p-4 flex flex-col gap-2 shadow-2xl min-w-[160px]" style="background:rgba(71,85,105,0.92);backdrop-filter:blur(12px);border:1px solid rgba(148,163,184,0.4);">
+<span class="font-section-label text-section-label uppercase text-white tracking-widest mb-1">CHÚ THÍCH LOS</span>
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full los-a shadow-[0_0_8px_rgba(37,99,235,0.6)]"></span>
+<span class="font-body-sm text-[12px] font-bold text-white">A – Tự do</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full los-b shadow-[0_0_8px_rgba(59,130,246,0.6)]"></span>
+<span class="font-body-sm text-[12px] font-bold text-white">B – Bình thường</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full los-c shadow-[0_0_8px_rgba(96,165,250,0.6)]"></span>
+<span class="font-body-sm text-[12px] font-bold text-white">C – Ổn định</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full los-d shadow-[0_0_8px_rgba(249,115,22,0.6)]"></span>
+<span class="font-body-sm text-[12px] font-bold text-white">D – Gần bão hòa</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full los-e shadow-[0_0_8px_rgba(239,68,68,0.6)]"></span>
+<span class="font-body-sm text-[12px] font-bold text-white">E – Kẹt xe</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full los-f shadow-[0_0_8px_rgba(185,28,28,0.6)]"></span>
+<span class="font-body-sm text-[12px] font-bold text-white">F – Tắc nghẽn</span>
+</div>
+</div>
 </div>
 </div>
 <!-- Routing Sidebar (Input Panel) -->
@@ -361,65 +392,17 @@
 </div>
 </div>
 </div>
-<!-- Waypoints Container -->
-<div id="waypoints-container" class="space-y-4 empty:hidden"></div>
-
-<!-- Add Waypoint Button -->
-<button id="add-waypoint-btn" class="w-full py-2 flex items-center justify-center gap-2 text-primary font-bold text-[11px] uppercase tracking-wider hover:bg-primary/10 rounded-lg transition-colors border border-dashed border-primary/30">
-    <span class="material-symbols-outlined text-[16px]">add_location_alt</span>
-    Thêm điểm dừng
-</button>
-
-<button id="find-route-btn" class="mt-4 w-full flex items-center justify-center gap-2 bg-primary text-on-primary font-bold py-3 px-4 rounded-xl hover:bg-primary-fixed transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
-    <span class="material-symbols-outlined">route</span>
-    Tìm đường
-</button>
 </div>
 <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
 <!-- Collapsed Expanders -->
-<div class="border border-outline-variant/10 rounded-xl overflow-hidden group">
-<button class="expander-toggle w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<div class="border border-outline-variant/10 rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-primary">tune</span>
 <span class="text-sm font-medium">Tùy chọn nâng cao</span>
 </div>
-<span class="expander-chevron material-symbols-outlined text-on-surface-variant transition-transform duration-300">expand_more</span>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
 </button>
-<div class="expander-body hidden p-4 bg-surface-container-low border-t border-outline-variant/10 space-y-4">
-    <!-- Giờ khởi hành -->
-    <div>
-        <label class="text-[10px] uppercase font-bold text-on-surface-variant mb-2 block tracking-wider">Giờ khởi hành (Dự đoán AI)</label>
-        <select id="predict-hour" class="w-full bg-surface-container border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary/50 focus:outline-none transition-colors">
-            <option value="">Bây giờ (LIVE traffic)</option>
-            <option value="6">6:00 Sáng</option>
-            <option value="7">7:00 Sáng (Cao điểm)</option>
-            <option value="8">8:00 Sáng (Cao điểm)</option>
-            <option value="9">9:00 Sáng</option>
-            <option value="12">12:00 Trưa</option>
-            <option value="16">16:00 Chiều</option>
-            <option value="17">17:00 Chiều (Cao điểm)</option>
-            <option value="18">18:00 Chiều (Cao điểm)</option>
-            <option value="19">19:00 Chiều</option>
-            <option value="22">22:00 Tối</option>
-        </select>
-    </div>
-    <!-- Tránh trạm thu phí -->
-    <label class="flex items-center gap-3 cursor-pointer group/chk">
-        <div class="relative flex items-center justify-center">
-            <input type="checkbox" id="avoid-tolls" class="peer appearance-none w-5 h-5 rounded border border-outline-variant/40 bg-surface-container checked:bg-primary checked:border-primary transition-all">
-            <span class="material-symbols-outlined absolute text-on-primary text-[14px] opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">check</span>
-        </div>
-        <span class="text-sm text-on-surface group-hover/chk:text-primary transition-colors">Tránh trạm thu phí</span>
-    </label>
-    <!-- Tránh phà -->
-    <label class="flex items-center gap-3 cursor-pointer group/chk">
-        <div class="relative flex items-center justify-center">
-            <input type="checkbox" id="avoid-ferries" class="peer appearance-none w-5 h-5 rounded border border-outline-variant/40 bg-surface-container checked:bg-primary checked:border-primary transition-all">
-            <span class="material-symbols-outlined absolute text-on-primary text-[14px] opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">check</span>
-        </div>
-        <span class="text-sm text-on-surface group-hover/chk:text-primary transition-colors">Tránh phà</span>
-    </label>
-</div>
 </div>
 <div class="border border-outline-variant/10 rounded-xl overflow-hidden">
 <button class="w-full flex items-center justify-between p-4 bg-surface-container-low hover:bg-surface-container-high transition-colors">
@@ -449,10 +432,10 @@
 </div>
 <!-- Footer (Predicted Component from JSON) -->
 <footer class="bg-surface-container-lowest border-t border-outline-variant/10 flex justify-between items-center px-margin-page py-unit w-full z-40">
-<span class="font-body-sm text-body-sm text-on-surface-variant">Nghiên cứu ITS · Bảng điều khiển giao thông thông minh TP.HCM</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ITS Research · Bảng điều khiển tình báo giao thông TP.HCM</span>
 <div class="flex gap-4">
 <span class="font-mono-data text-mono-data text-on-surface-variant/60">Nút: VM-HCM-04</span>
-<span class="font-mono-data text-mono-data text-primary">v2026.07 · chính thức</span>
+<span class="font-mono-data text-mono-data text-primary">v2026.07 · bản chính thức</span>
 </div>
 </footer>
 </main>

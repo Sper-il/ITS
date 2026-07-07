@@ -55,6 +55,7 @@ def find_route():
     try:
         s_lat = float(body["start_lat"])
         s_lon = float(body["start_lon"])
+        e_lat = float(body["end_lat"])
         e_lon = float(body["end_lon"])
         vehicle = str(body.get("vehicle", "car"))
         predict_hour = body.get("predict_hour")

@@ -18,7 +18,7 @@
     const m = sumRes.validation || {};
     const accuracyPill = q1("#sidebar-accuracy");
     if (accuracyPill && m.val_accuracy != null) {
-      accuracyPill.textContent = "Accuracy " + (m.val_accuracy * 100).toFixed(1) + "%";
+      accuracyPill.textContent = "Độ chính xác " + (m.val_accuracy * 100).toFixed(1).replace(".", ",") + "%";
     }
 
     // ── KPI tiles ──────────────────────────────────────────────────

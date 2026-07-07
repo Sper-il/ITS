@@ -3,7 +3,7 @@
 <html class="dark" lang="vi"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Chỉ số LOS · Bảng điều khiển Tìm đường</title>
+<title>Traffic LOS · Bảng điều khiển Tìm đường</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -234,40 +234,19 @@ Tìm đường
 </div>
 <span class="material-symbols-outlined text-on-surface-variant expander-chevron transition-transform">expand_more</span>
 </button>
-<div class="expander-body hidden bg-surface-container-lowest border-t border-outline-variant/10 p-4 space-y-4">
-    <!-- Giờ khởi hành -->
-    <div>
-        <label class="text-[10px] uppercase font-bold text-on-surface-variant mb-2 block tracking-wider">Giờ khởi hành (Dự đoán AI)</label>
-        <select id="predict-hour" class="w-full bg-surface-container border border-outline-variant/20 rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary/50 focus:outline-none transition-colors">
-            <option value="">Bây giờ (LIVE traffic)</option>
-            <option value="6">6:00 Sáng</option>
-            <option value="7">7:00 Sáng (Cao điểm)</option>
-            <option value="8">8:00 Sáng (Cao điểm)</option>
-            <option value="9">9:00 Sáng</option>
-            <option value="12">12:00 Trưa</option>
-            <option value="16">16:00 Chiều</option>
-            <option value="17">17:00 Chiều (Cao điểm)</option>
-            <option value="18">18:00 Chiều (Cao điểm)</option>
-            <option value="19">19:00 Chiều</option>
-            <option value="22">22:00 Tối</option>
-        </select>
-    </div>
-    <!-- Tránh trạm thu phí -->
-    <label class="flex items-center gap-3 cursor-pointer group/chk">
-        <div class="relative flex items-center justify-center">
-            <input type="checkbox" id="avoid-tolls" class="peer appearance-none w-5 h-5 rounded border border-outline-variant/40 bg-surface-container checked:bg-primary checked:border-primary transition-all">
-            <span class="material-symbols-outlined absolute text-on-primary text-[14px] opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">check</span>
-        </div>
-        <span class="text-sm text-on-surface group-hover/chk:text-primary transition-colors">Tránh trạm thu phí</span>
-    </label>
-    <!-- Tránh phà -->
-    <label class="flex items-center gap-3 cursor-pointer group/chk">
-        <div class="relative flex items-center justify-center">
-            <input type="checkbox" id="avoid-ferries" class="peer appearance-none w-5 h-5 rounded border border-outline-variant/40 bg-surface-container checked:bg-primary checked:border-primary transition-all">
-            <span class="material-symbols-outlined absolute text-on-primary text-[14px] opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">check</span>
-        </div>
-        <span class="text-sm text-on-surface group-hover/chk:text-primary transition-colors">Tránh phà</span>
-    </label>
+<div class="expander-body hidden bg-surface-container-lowest border-t border-outline-variant/10 p-4 space-y-3">
+<label class="flex items-center justify-between text-sm">
+<span class="text-on-surface">Tránh đường cao tốc</span>
+<input type="checkbox" id="opt-no-motorway" class="w-4 h-4 accent-primary"/>
+</label>
+<label class="flex items-center justify-between text-sm">
+<span class="text-on-surface">Ưu tiên LOS thấp (ít kẹt)</span>
+<input type="checkbox" id="opt-low-los" class="w-4 h-4 accent-primary" checked/>
+</label>
+<label class="flex items-center justify-between text-sm">
+<span class="text-on-surface">Cho phép đường thu phí</span>
+<input type="checkbox" id="opt-toll" class="w-4 h-4 accent-primary" checked/>
+</label>
 </div>
 </div>
 <!-- History expander -->
@@ -328,7 +307,7 @@ Tìm đường
                 LOS
             </div>
 <div>
-<h1 class="font-headline-sm text-headline-sm font-bold text-primary leading-tight">Chỉ số LOS Giao thông</h1>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary leading-tight">ITS Traffic LOS</h1>
 <p class="font-body-sm text-body-sm text-on-surface-variant">TP.HCM · VN</p>
 </div>
 </div>
@@ -340,7 +319,7 @@ Tìm đường
 <div class="bg-surface-container-high rounded-xl p-3 mb-4">
 <div class="flex justify-between items-center mb-1">
 <span class="font-body-sm text-body-sm text-on-surface-variant">Độ chính xác</span>
-<span class="font-mono-data text-mono-data text-primary">75.1%</span>
+<span class="font-mono-data text-mono-data text-primary">75,1%</span>
 </div>
 <div class="w-full bg-surface-variant rounded-full h-1.5">
 <div class="bg-primary h-1.5 rounded-full" style="width: 75.1%"></div>
@@ -373,6 +352,15 @@ Tìm đường
 <button id="toggle-sidebar-btn" class="p-2 text-on-surface-variant hover:text-primary transition-all" title="Ẩn/hiện panel nhập liệu">
 <span class="material-symbols-outlined">menu_open</span>
 </button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full border border-primary/20 overflow-hidden ml-2">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female traffic engineer in a high-tech control center environment. She has a focused expression, softly lit by blue ambient screens in the background. The aesthetic is clean, corporate, and highly technical with shallow depth of field, emphasizing expertise and precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZdCQdryuj2Z9e6r73iHfhzZHO1H36AifaioObgWXXmBOtsDd5BSKosev83TGoNfIkiKP7lTD_nvfoWWFFSOAhh02ZAEcTQ6u1BaPslQ2I3ZMCHdzSz3zV57ms7Kj-c4_j8TJlN3oKeVm-SbZ2FMg-rCDvPb_ckr3hGB5xUuiul0-VM7VcDvSAlzTRTkuTAR4_woLd4YgaYlHuHZb1BulothTCi0PWzAMNkdjEsqBeN-FMQuSOfjwq63jrC_ozvqOjb54jC6FTv-I"/>
+</div>
 </div>
 </header>
 <!-- Map Workspace -->
@@ -385,31 +373,47 @@ Tìm đường
 <div class="absolute top-margin-page right-margin-page z-20 flex flex-col gap-4">
 <!-- Strategy Legend -->
 <div class="glass-panel rounded-xl p-4 w-64 shadow-2xl">
-<h3 class="font-section-label text-section-label uppercase text-on-surface-variant mb-3 tracking-widest">Chiến lược định tuyến</h3>
+<h3 class="font-section-label text-section-label uppercase text-on-surface-variant mb-3 tracking-widest">Chiến lược đường đi</h3>
 <div class="flex items-center gap-3 mb-2 bg-primary/10 p-2 rounded-lg border border-primary/20">
 <span class="material-symbols-outlined text-primary text-[20px]">verified</span>
 <span class="font-body-md text-body-md text-primary font-bold">Nhanh nhất (Tối ưu)</span>
 </div>
 <div class="flex items-center gap-3 p-2 opacity-60">
 <span class="material-symbols-outlined text-on-surface-variant text-[20px]">forest</span>
-<span class="font-body-md text-body-md">Đường xanh nhất</span>
+<span class="font-body-md text-body-md">Đường ít khói bụi</span>
 </div>
 <div class="flex items-center gap-3 p-2 opacity-60">
 <span class="material-symbols-outlined text-on-surface-variant text-[20px]">monetization_on</span>
-<span class="font-body-md text-body-md">Tránh thu phí</span>
+<span class="font-body-md text-body-md">Tránh đường thu phí</span>
 </div>
 </div>
 </div>
 <div class="absolute bottom-margin-page left-margin-page z-20">
-<!-- LOS Legend Vertical -->
-<div class="flex flex-col gap-2 p-4 bg-surface-container-highest/90 backdrop-blur-xl border border-outline-variant/20 rounded-xl shadow-2xl w-48">
-    <h3 class="font-section-label text-[10px] uppercase text-on-surface-variant tracking-widest mb-1">Chú thích LOS</h3>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-a shadow-[0_0_8px_rgba(37,99,235,0.8)]"></span><span class="text-xs text-on-surface font-medium">A — Tự do</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-b shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span><span class="text-xs text-on-surface font-medium">B — Bình thường</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-c shadow-[0_0_8px_rgba(96,165,250,0.8)]"></span><span class="text-xs text-on-surface font-medium">C — Ổn định</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-d shadow-[0_0_8px_rgba(249,115,22,0.8)]"></span><span class="text-xs text-on-surface font-medium">D — Gần bão hòa</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-e shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span><span class="text-xs text-on-surface font-medium">E — Kẹt xe</span></div>
-    <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full los-f shadow-[0_0_8px_rgba(185,28,28,0.8)]"></span><span class="text-xs text-on-surface font-medium">F — Tắc nghẽn</span></div>
+<!-- LOS Legend -->
+<div class="rounded-xl px-4 py-3 flex items-center gap-6 shadow-2xl" style="background:rgba(71,85,105,0.92);backdrop-filter:blur(12px);border:1px solid rgba(148,163,184,0.4);">
+<span class="font-section-label text-section-label uppercase text-white tracking-widest border-r border-white/30 pr-4">THANG LOS</span>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full los-a"></span>
+<span class="font-mono-data text-mono-data text-white">A</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full los-b"></span>
+<span class="font-mono-data text-mono-data text-white">B</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full los-c"></span>
+<span class="font-mono-data text-mono-data text-white">C</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full los-d"></span>
+<span class="font-mono-data text-mono-data text-white">D</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full los-e"></span>
+<span class="font-mono-data text-mono-data text-white">E</span>
+</div>
+</div>
 </div>
 </div>
 <!-- Results Drawer -->
@@ -424,14 +428,14 @@ Tìm đường
 <div class="grid grid-cols-3 gap-2 mb-4">
 <div class="text-center p-2 bg-surface-container/50 rounded-xl border border-white/5">
 <p class="text-[10px] uppercase text-on-surface-variant font-bold">Khoảng cách</p>
-<p id="drawer-distance" class="font-mono-data text-primary text-lg">12.4 km</p>
+<p id="drawer-distance" class="font-mono-data text-primary text-lg">12,4 km</p>
 </div>
 <div class="text-center p-2 bg-surface-container/50 rounded-xl border border-white/5">
 <p class="text-[10px] uppercase text-on-surface-variant font-bold">Thời gian</p>
 <p id="drawer-time" class="font-mono-data text-primary text-lg">23 phút</p>
 </div>
 <div class="text-center p-2 bg-surface-container/50 rounded-xl border border-white/5">
-<p class="text-[10px] uppercase text-on-surface-variant font-bold">Độ tin cậy</p>
+<p class="text-[10px] uppercase text-on-surface-variant font-bold">Tin cậy</p>
 <p id="drawer-confidence" class="font-mono-data text-primary text-lg">87%</p>
 </div>
 </div>
@@ -454,12 +458,12 @@ Tìm đường
 <!-- Scrollable Content -->
 <div class="flex-1 overflow-y-auto p-5 custom-scrollbar">
 <!-- Route Comparison -->
-<h4 class="font-section-label text-section-label text-on-surface-variant uppercase tracking-widest mb-3">So sánh</h4>
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase tracking-widest mb-3">So sánh tuyến</h4>
 <div id="route-cards" class="space-y-3 mb-6">
 <!-- Active Card -->
 <div class="p-4 rounded-xl bg-primary-container/20 border border-primary/40 ring-1 ring-primary/20 shadow-lg">
 <div class="flex justify-between items-start mb-2">
-<span class="font-body-md font-bold text-primary">Tuyến 1: CT Long Thành</span>
+<span class="font-body-md font-bold text-primary">Tuyến 1: Cao tốc Long Thành</span>
 <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
 </div>
 <div class="flex gap-4 font-mono-data text-xs text-on-primary-container opacity-80">
@@ -468,20 +472,20 @@ Tìm đường
 <span>Tiết kiệm 5 phút</span>
 </div>
 </div>
-<!-- Alternative -->
+<!-- Phương án thay thế -->
 <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/10 hover:bg-surface-variant/30 transition-colors cursor-pointer">
 <div class="flex justify-between items-start mb-2">
-<span class="font-body-md font-bold text-on-surface">Tuyến 2: Xa Lộ Hà Nội</span>
+<span class="font-body-md font-bold text-on-surface">Tuyến 2: Xa lộ Hà Nội</span>
 </div>
 <div class="flex gap-4 font-mono-data text-xs text-on-surface-variant">
 <span>28 phút</span>
 <span>•</span>
-<span>Kẹt xe nhiều hơn</span>
+<span>Ùn tắc nặng hơn</span>
 </div>
 </div>
 </div>
 <!-- Turn by Turn -->
-<h4 class="font-section-label text-section-label text-on-surface-variant uppercase tracking-widest mb-3">Chi tiết lộ trình</h4>
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase tracking-widest mb-3">Chi tiết tuyến đường</h4>
 <div class="space-y-4">
 <div class="flex gap-4">
 <div class="flex flex-col items-center">
@@ -554,7 +558,7 @@ Tìm đường
 <p class="font-body-md font-bold text-on-surface">Đến điểm kết thúc</p>
 <span class="text-[10px] font-bold px-1.5 py-0.5 rounded los-a text-white">LOS A</span>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">HCMC Industrial Park</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Khu công nghiệp TP.HCM</p>
 </div>
 </div>
 </div>
@@ -581,9 +585,9 @@ Tìm đường
 </section>
 <!-- Footer -->
 <footer class="flex justify-between items-center px-margin-page py-unit w-full bg-surface-container-lowest border-t border-outline-variant/10 z-40">
-<span class="font-body-sm text-body-sm text-on-surface-variant">Nghiên cứu ITS · Bảng điều khiển giao thông thông minh TP.HCM</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ITS Research · Bảng điều khiển tình báo giao thông TP.HCM</span>
 <div class="flex gap-4 items-center">
-<span class="font-mono-data text-mono-data text-on-surface-variant">v2026.07 · chính thức</span>
+<span class="font-mono-data text-mono-data text-on-surface-variant">v2026.07 · bản chính thức</span>
 <span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
 </div>
 </footer>

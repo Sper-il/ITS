@@ -134,13 +134,13 @@
 <div class="flex items-center gap-3 mb-6">
 <div class="font-headline-sm text-headline-sm font-bold text-on-primary-container bg-primary-container rounded-lg p-2">ITS</div>
 <div>
-<h1 class="font-headline-sm text-headline-sm font-bold text-primary leading-tight">Chỉ số LOS Giao thông</h1>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary leading-tight">ITS Traffic LOS</h1>
 <p class="font-body-sm text-body-sm text-on-surface-variant">TP.HCM · VN</p>
 </div>
 </div>
 <div class="mt-auto pt-6 space-y-4">
 <div class="bg-primary/20 rounded-lg p-3 border border-primary/20 text-center">
-<span id="sidebar-accuracy" class="text-primary font-mono-data text-mono-data">Độ chính xác 75.1%</span>
+<span id="sidebar-accuracy" class="text-primary font-mono-data text-mono-data">Độ chính xác 75,1%</span>
 </div>
 <div class="text-on-surface-variant font-body-md px-4 py-2 flex items-center gap-3 hover:bg-surface-variant/50 transition-colors cursor-pointer">
 <span class="material-symbols-outlined animate-spin">sync</span>
@@ -163,7 +163,12 @@
 <div class="flex items-center gap-4">
 <div class="flex items-center gap-2 px-3 py-1 bg-error/10 border border-error/30 rounded-full">
 <span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
-<span class="text-error font-mono-data text-[11px] font-bold">TRỰC TIẾP</span>
+<span class="text-error font-mono-data text-[11px] font-bold">LIVE</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">settings</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a traffic engineer in a high-tech control room environment, sharp focus, cinematic lighting with subtle blue and orange neon highlights, wearing tactical urban professional attire, set against a background of blurred data screens." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANYYItHTE_ud-IsneVgRBXlIMIlGj2xWjprUznzEWhoGt6pRZGFCBgsqfOncZKaf1Y2RM4DSQG6qFsZL8QX2LA-59MhM336nZa_4g743U3iDVJGYu2rxAFep69sdez3u3lisQmB3mb2FFH3ZDKGxFMLLYirEVO5onj_LUwg2JGynK6ynbM-RCg2NZh1WKNk7Aw4vCxqmjGy84wW1ebgZsAs6uy_shUpAQq1KEE64Vi9OPmdVEHCp_H5I3UIbCrvo3N3YyC8BzeGU0"/>
 </div>
 </div>
 </header>
@@ -181,7 +186,7 @@
 <div class="absolute top-0 right-0 p-4 opacity-20">
 <span class="material-symbols-outlined text-6xl">pie_chart</span>
 </div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface mb-6">Phân bổ LOS trên toàn mạng lưới</h3>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-6">Phân bố LOS trong toàn mạng lưới</h3>
 <div class="flex items-center justify-between">
 <!-- Simulated Donut -->
 <div class="relative w-48 h-48 flex items-center justify-center">
@@ -245,7 +250,7 @@
 </div>
 <!-- Dominant Class -->
 <div class="glass-panel rounded-xl p-4 flex flex-col justify-between group cursor-default">
-<span class="font-section-label text-section-label text-on-surface-variant uppercase">Lớp chiếm ưu thế</span>
+<span class="font-section-label text-section-label text-on-surface-variant uppercase">Cấp chiếm ưu thế</span>
 <div class="flex items-baseline gap-2">
 <span id="kpi-dominant-los" class="font-mono-data text-3xl font-bold text-[#60a5fa]">LOS C</span>
 <span id="kpi-dominant-name" class="font-body-sm text-on-surface-variant">Ổn định</span>
@@ -273,7 +278,7 @@
 <!-- Legend -->
 <div class="glass-panel rounded-xl overflow-hidden">
 <div class="px-panel-padding py-3 border-b border-outline-variant/10 bg-surface-container-highest/20">
-<h4 class="font-section-label text-section-label text-on-surface-variant uppercase">Chú giải Mức độ phục vụ</h4>
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase">Chú thích Mức phục vụ</h4>
 </div>
 <div class="p-panel-padding space-y-3">
 <div class="flex items-center justify-between text-body-sm py-1 border-b border-outline-variant/5">
@@ -329,12 +334,12 @@
 <!-- F1 Score -->
 <div class="glass-panel rounded-xl overflow-hidden">
 <div class="px-panel-padding py-3 border-b border-outline-variant/10 bg-surface-container-highest/20">
-<h4 class="font-section-label text-section-label text-on-surface-variant uppercase">Điểm F1 cho từng lớp</h4>
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase">F1 score per class</h4>
 </div>
 <div class="p-panel-padding space-y-5">
 <div class="space-y-1">
 <div class="flex justify-between text-[11px] font-mono-data">
-<span>Lớp A</span>
+<span>Cấp A</span>
 <span>89%</span>
 </div>
 <div class="los-bar w-full">
@@ -343,7 +348,7 @@
 </div>
 <div class="space-y-1">
 <div class="flex justify-between text-[11px] font-mono-data">
-<span>Lớp B</span>
+<span>Cấp B</span>
 <span>82%</span>
 </div>
 <div class="los-bar w-full">
@@ -352,7 +357,7 @@
 </div>
 <div class="space-y-1">
 <div class="flex justify-between text-[11px] font-mono-data">
-<span>Lớp C</span>
+<span>Cấp C</span>
 <span>78%</span>
 </div>
 <div class="los-bar w-full">
@@ -361,7 +366,7 @@
 </div>
 <div class="space-y-1">
 <div class="flex justify-between text-[11px] font-mono-data">
-<span>Lớp D</span>
+<span>Cấp D</span>
 <span>71%</span>
 </div>
 <div class="los-bar w-full">
@@ -370,7 +375,7 @@
 </div>
 <div class="space-y-1">
 <div class="flex justify-between text-[11px] font-mono-data">
-<span>Lớp E</span>
+<span>Cấp E</span>
 <span>64%</span>
 </div>
 <div class="los-bar w-full">
@@ -379,7 +384,7 @@
 </div>
 <div class="space-y-1">
 <div class="flex justify-between text-[11px] font-mono-data">
-<span>Lớp F</span>
+<span>Cấp F</span>
 <span>58%</span>
 </div>
 <div class="los-bar w-full">
@@ -392,7 +397,7 @@
 <!-- Row 3: Confidence Histogram -->
 <div class="glass-panel rounded-xl p-panel-padding mb-8">
 <div class="flex justify-between items-center mb-8">
-<h4 class="font-section-label text-section-label text-on-surface-variant uppercase">Biểu đồ phân phối Độ tin cậy</h4>
+<h4 class="font-section-label text-section-label text-on-surface-variant uppercase">Biểu đồ tần suất điểm tin cậy</h4>
 <div class="flex gap-4">
 <div class="flex items-center gap-2">
 <div class="w-2 h-2 bg-primary"></div>
@@ -428,18 +433,18 @@
 <div class="histogram-bar bg-primary/40 w-full hover:bg-primary transition-colors" style="height: 10%"></div>
 </div>
 <div class="flex justify-between mt-4 border-t border-outline-variant/10 pt-2">
-<span class="text-[10px] font-mono-data text-on-surface-variant">ĐỘ TIN CẬY 0.00</span>
+<span class="text-[10px] font-mono-data text-on-surface-variant">0.00 CONFIDENCE</span>
 <span class="text-[10px] font-mono-data text-on-surface-variant text-center">0.50</span>
-<span class="text-[10px] font-mono-data text-on-surface-variant">ĐỘ TIN CẬY 1.00</span>
+<span class="text-[10px] font-mono-data text-on-surface-variant">1.00 CONFIDENCE</span>
 </div>
 </div>
 </div>
 <!-- Footer -->
 <footer class="flex justify-between items-center px-margin-page py-unit w-full bg-surface-container-lowest border-t border-outline-variant/10 mt-auto">
 <div class="flex items-center gap-4">
-<span class="font-body-sm text-body-sm text-on-surface-variant">Nghiên cứu ITS · Bảng điều khiển giao thông thông minh TP.HCM</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ITS Research · Bảng điều khiển tình báo giao thông TP.HCM</span>
 <span class="text-outline-variant">|</span>
-<span class="font-mono-data text-mono-data text-on-surface-variant">v2026.07 · chính thức</span>
+<span class="font-mono-data text-mono-data text-on-surface-variant">v2026.07 · bản chính thức</span>
 </div>
 <div class="flex gap-6">
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Tài liệu API</a>

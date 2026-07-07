@@ -218,8 +218,24 @@ def find_all_paths(
                 if real_time is None or (isinstance(real_time, float) and real_time != real_time):
                     real_time = free_flow
             total_time += real_time
+            total_dist += length
 
             los_dist[los] = los_dist.get(los, 0) + 1
+
+            lat1 = ed.get("lat1") or G.nodes[u].get('lat', G.nodes[u].get('y'))
+            lon1 = ed.get("lon1") or G.nodes[u].get('lon', G.nodes[u].get('x'))
+            lat2 = ed.get("lat2") or G.nodes[v].get('lat', G.nodes[v].get('y'))
+            lon2 = ed.get("lon2") or G.nodes[v].get('lon', G.nodes[v].get('x'))
+            
+            edge_geometry = []
+            if "geometry" in ed:
+                try:
+                    coords = list(ed["geometry"].coords)
+                    edge_geometry = [(pt[1], pt[0]) for pt in coords]
+                except Exception:
+                    edge_geometry = [(lat1, lon1), (lat2, lon2)]
+            else:
+                edge_geometry = [(lat1, lon1), (lat2, lon2)]
 
             edges_info.append({
                 "from": u,
@@ -230,15 +246,16 @@ def find_all_paths(
                 "street": ed.get("street_name", ""),
                 "street_type": ed.get("street_type", ""),
                 "travel_time_s": float(real_time),
-                "lat1": ed.get("lat1", 0),
-                "lon1": ed.get("lon1", 0),
-                "lat2": ed.get("lat2", 0),
-                "lon2": ed.get("lon2", 0),
+                "lat1": lat1,
+                "lon1": lon1,
+                "lat2": lat2,
+                "lon2": lon2,
                 "street_name": ed.get("street_name", "unknown"),
+                "geometry": edge_geometry,
             })
-
-            lat1, lon1 = ed.get("lat1", 0), ed.get("lon1", 0)
-            lat2, lon2 = ed.get("lat2", 0), ed.get("lon2", 0)
+            
+            # If the edge has a proper shapely geometry, we could use its coords here,
+            # but for now we ensure at least the two endpoints are included.
             if lat1 and lon1:
                 geometry.append((lat1, lon1))
             if lat2 and lon2:

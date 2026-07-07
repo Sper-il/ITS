@@ -11,12 +11,10 @@ const NavApp = (() => {
   
   let watchId = null;
   let isAutoCenter = true;
-  let isHeadingUp = false;
+  let headingUpWanted = false;  // user's intent for heading-up mode; survives drag/pan
   let isVoiceEnabled = true;
   let lastAnnouncedManeuver = "";
   let lastHeading = 0;
-  let simInterval = null;
-  let lastPos = null;
 
   // Bearing calculation
   function bearingDeg(lat1, lon1, lat2, lon2) {
@@ -201,7 +199,6 @@ const NavApp = (() => {
 
   function handlePositionUpdate(pos) {
     if (!routeData) return;
-    lastPos = pos;
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
     
@@ -250,24 +247,25 @@ const NavApp = (() => {
         
     const container = $("#map-container");
     if (container) {
+        // Heading-up only works while we're auto-centering. Once the user
+        // pans freely, the map holds north-up so the rotated world stays
+        // aligned with the (stationary) map. Recentering re-activates it.
+        const isHeadingUp = isAutoCenter && headingUpWanted;
         if (isHeadingUp) {
             container.style.transition = "transform 0.5s ease-in-out";
-            container.style.transformOrigin = "center center";
-            // Create a 3D tilt effect: perspective + pitch + heading + zoom compensation + move marker lower
-            container.style.transform = `perspective(1200px) rotateX(55deg) rotateZ(${-heading}deg) scale(1.8) translateY(15%)`;
+            container.style.transform = `rotateZ(${-heading}deg)`;
         } else {
             container.style.transition = "transform 0.5s ease-in-out";
-            container.style.transformOrigin = "center center";
-            container.style.transform = `perspective(1200px) rotateX(0deg) rotateZ(0deg) scale(1) translateY(0%)`;
+            container.style.transform = `rotateZ(0deg)`;
         }
     }
         
-    // Marker rotation
+    // Marker inner dot (currently flat 2D)
     const markerEl = userMarker.getElement();
     if (markerEl) {
-        const inner = markerEl.querySelector('#user-arrow-container');
+        const inner = markerEl.querySelector('.user-dot-pulse');
         if (inner) {
-            inner.style.transform = `rotateZ(${heading}deg)`;
+            // Optional styling here
         }
     }
 
@@ -291,11 +289,6 @@ const NavApp = (() => {
       navigator.geolocation.clearWatch(watchId);
       watchId = null;
     }
-    if (simInterval !== null) {
-      clearInterval(simInterval);
-      simInterval = null;
-    }
-
     if (enabled) {
       if ("geolocation" in navigator) {
         watchId = navigator.geolocation.watchPosition(
@@ -306,8 +299,6 @@ const NavApp = (() => {
           }, 
           { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
         );
-      } else {
-        setBannerState("danger", "Trình duyệt không hỗ trợ GPS", "gps_off");
       }
     }
   }
@@ -335,12 +326,8 @@ const NavApp = (() => {
 
     const userIcon = L.divIcon({
       className: '',
-      html: `<div id="user-arrow-container" style="transition: transform 0.5s ease-out; transform-origin: center; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;">
-               <svg width="36" height="36" viewBox="0 0 24 24" fill="#3b82f6" stroke="white" stroke-width="2.5" style="filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.6));">
-                 <path d="M12 2L21 21L12 17L3 21L12 2Z" stroke-linejoin="round" stroke-linecap="round"/>
-               </svg>
-             </div>`,
-      iconSize: [48, 48], iconAnchor: [24, 24]
+      html: `<div class="w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-xl relative flex items-center justify-center user-dot-pulse"></div>`,
+      iconSize: [24, 24], iconAnchor: [12, 12]
     });
     userMarker = L.marker(startLoc, { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
 
@@ -349,10 +336,23 @@ const NavApp = (() => {
     // Wire Free Roam logic
     map.on('dragstart', () => {
       isAutoCenter = false;
+      // headingUpWanted is preserved: the user can re-engage heading-up
+      // by tapping the compass button (or recenter → auto-center → resume).
       const recenterBtn = $("#recenterBtn");
       if (recenterBtn) {
           recenterBtn.classList.remove("text-primary");
           recenterBtn.classList.add("text-white", "animate-pulse");
+      }
+      const compassBtn = $("#compassBtn");
+      if (compassBtn) {
+          compassBtn.classList.remove("text-primary");
+          compassBtn.classList.add("text-white");
+      }
+      // Drop any in-flight rotation; map is now north-up while free-roaming.
+      const container = $("#map-container");
+      if (container) {
+          container.style.transition = "transform 0.5s ease-in-out";
+          container.style.transform = `rotateZ(0deg)`;
       }
     });
 
@@ -363,19 +363,20 @@ const NavApp = (() => {
           recenterBtn.classList.add("text-primary");
           recenterBtn.classList.remove("text-white", "animate-pulse");
       }
-      if (lastPos) {
-        map.setView([lastPos.coords.latitude, lastPos.coords.longitude], 17);
-        handlePositionUpdate(lastPos);
-      } else if (routeData && routeData.geometry[currentCoordIndex]) {
+      if (routeData && routeData.geometry[currentCoordIndex]) {
         map.setView(routeData.geometry[currentCoordIndex], 17);
+        // Trigger a fake update to fix rotation
         handlePositionUpdate({coords: {latitude: routeData.geometry[currentCoordIndex][0], longitude: routeData.geometry[currentCoordIndex][1], speed: null, heading: lastHeading}});
       }
     });
 
     $("#compassBtn")?.addEventListener("click", () => {
-        isHeadingUp = !isHeadingUp;
+        // Heading-up needs an auto-centered map; enable it implicitly so the
+        // toggle is reliable even from Free Roam.
+        if (!headingUpWanted) isAutoCenter = true;
+        headingUpWanted = !headingUpWanted;
         const compassBtn = $("#compassBtn");
-        if (isHeadingUp) {
+        if (headingUpWanted) {
             compassBtn.classList.add("text-primary");
             compassBtn.classList.remove("text-white");
         } else {
@@ -383,9 +384,7 @@ const NavApp = (() => {
             compassBtn.classList.add("text-white");
         }
         // Force update map rotation
-        if (lastPos) {
-           handlePositionUpdate(lastPos);
-        } else if (routeData && routeData.geometry[currentCoordIndex]) {
+        if (routeData && routeData.geometry[currentCoordIndex]) {
            const [lat, lon] = routeData.geometry[currentCoordIndex];
            handlePositionUpdate({coords: {latitude: lat, longitude: lon, speed: null, heading: lastHeading}});
         }

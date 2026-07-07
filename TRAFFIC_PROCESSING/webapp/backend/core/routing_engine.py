@@ -178,6 +178,7 @@ def find_all_paths_between(
                 "travel_time_s": e["travel_time_s"],
                 "lat1":         e["lat1"], "lon1": e["lon1"],
                 "lat2":         e["lat2"], "lon2": e["lon2"],
+                "geometry":     e.get("geometry", []),
             })
         out.append({
             "strategy":               r.strategy,
