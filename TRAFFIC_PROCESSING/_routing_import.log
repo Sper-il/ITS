@@ -1,0 +1,3 @@
+[routing/__init__.py] sys.path[:3] = ['C:\\Users\\Admin\\Downloads\\ITS\\TRAFFIC_PROCESSING\\scripts', 'C:\\Users\\Admin\\Downloads\\ITS\\TRAFFIC_PROCESSING\\webapp', 'C:\\Users\\Admin\\Downloads\\ITS\\TRAFFIC_PROCESSING']
+[routing/__init__.py] _package_root = C:\Users\Admin\Downloads\ITS\TRAFFIC_PROCESSING
+[routing/__init__.py] _scripts_root = C:\Users\Admin\Downloads\ITS\TRAFFIC_PROCESSING\scripts\routing
